@@ -1,0 +1,35 @@
+# Ignore everything in the root except the "wp-content" directory.
+/*
+!.gitignore
+
+
+# Ignore everything in the "plugins" directory, except the plugins you
+# specify (see the commented-out examples for hints on how to do this.)
+!plugins/
+plugins/*
+!plugins/njb-customizations
+
+# !plugins/my-directory-plugin/
+
+# Ignore everything in the "themes" directory, except the themes you
+# specify (see the commented-out example for a hint on how to do this.)
+!themes/
+themes/*
+!themes/njb
+
+.DS_Store
+*.lessc.css
+node_modules/
+
+# Ignore assets except source files
+**/assets/*
+!**/assets/source
+!**/assets/source/css
+!**/assets/source/js
+
+#ignore maps
+**/assets/source/_maps
+
+!package.json
+!project-folders.json
+!gulpfile.js
