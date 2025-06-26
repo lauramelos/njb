@@ -22,6 +22,7 @@ themes/*
 node_modules/
 
 # Ignore assets except source files
+**/build/*
 **/assets/*
 !**/assets/source
 !**/assets/source/css
