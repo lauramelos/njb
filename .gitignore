@@ -7,7 +7,7 @@
 # specify (see the commented-out examples for hints on how to do this.)
 !plugins/
 plugins/*
-!plugins/njb-customizations
+!plugins/njb*
 
 # !plugins/my-directory-plugin/
 
