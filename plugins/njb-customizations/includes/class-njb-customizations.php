@@ -29,7 +29,7 @@ class NJB_Customizations {
       
     }
     public function custom_excerpt_more( $more ) {
-        return '';
+        return '...';
     }
    
 }

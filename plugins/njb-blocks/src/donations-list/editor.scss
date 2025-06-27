@@ -5,5 +5,44 @@
  */
 
 .wp-block-create-block-donations-list {
-	border: 1px dotted #f00;
+	ul {
+		list-style: none;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(19%, 1fr));
+		gap: 1%;
+		li {
+			background-color: #f5f5f5;
+			padding: 15px;
+			display: flex;
+   			flex-wrap: wrap;
+			justify-content: center;
+			img{
+				max-width: 100%;
+				height: auto;
+			}
+			h3 {
+				font-weight: bold;
+				width: 100%;
+			}
+			p{
+				font-size: .8em ;
+				text-align: left;
+				a {
+					font-weight: bold;
+					color: #0073aa;
+					text-decoration: none;
+				}
+			}
+			.amount_donated{
+				font-weight: bold;
+				background-color: cadetblue;
+				font-size: 1em;
+				margin: 0 -15px -15px;
+				padding: 5px 15px;
+				text-align: center;
+			}
+		}
+
+	}
 }
