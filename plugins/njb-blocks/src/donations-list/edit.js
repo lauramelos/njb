@@ -72,9 +72,9 @@ export default function Edit() {
 								dangerouslySetInnerHTML={{
 									__html: donation.content.rendered
 										.replace(/<[^>]+>/g, '')
-										.substring(0, 200) + '...',
+										.substring(0, 200) + '... ',
 								}}
-							> </span>
+							></span>
 							{donation.link && (
 								<a
 									href={donation.link}
