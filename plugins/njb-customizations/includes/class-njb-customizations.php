@@ -3,6 +3,8 @@ class NJB_Customizations {
     public function __construct() {
         // Initialization code here
        add_filter( 'excerpt_more', array( $this, 'custom_excerpt_more' ) );
+       add_filter( 'excerpt_length',array( $this, 'custom_excerpt_length' ) );
+
     }
 
     public function activate() {
@@ -32,4 +34,7 @@ class NJB_Customizations {
         return '...';
     }
    
+    public function custom_excerpt_length( $more ) {
+        return 15;
+    }
 }
