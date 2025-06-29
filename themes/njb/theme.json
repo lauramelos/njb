@@ -9,44 +9,59 @@
 			"defaultPalette": false,
 			"palette": [
 				{
-					"color": "#FFFFFF",
+					"color": "#FDFAF9",
 					"name": "Base",
 					"slug": "base"
 				},
 				{
-					"color": "#111111",
+					"color": "#000000",
 					"name": "Contrast",
 					"slug": "contrast"
 				},
 				{
-					"color": "#FFEE58",
+					"color": "#D2CFD0",
 					"name": "Accent 1",
 					"slug": "accent-1"
 				},
 				{
-					"color": "#F6CFF4",
-					"name": "Accent 2",
-					"slug": "accent-2"
+					"color": "#F26C63",
+					"name": "coral",
+					"slug": "coral"
 				},
 				{
-					"color": "#503AA8",
+					"color": "#F2A365",
 					"name": "Accent 3",
 					"slug": "accent-3"
 				},
 				{
-					"color": "#686868",
-					"name": "Accent 4",
-					"slug": "accent-4"
+					"color": "#D9A441",
+					"name": "Mustard",
+					"slug": "accent-7"
 				},
 				{
-					"color": "#FBFAF3",
+					"color": "#7E5BEF",
+					"name": "Violet",
+					"slug": "accent-2"
+				},
+				{
+					"color": "#F2C94C",
 					"name": "Accent 5",
 					"slug": "accent-5"
 				},
 				{
-					"color": "color-mix(in srgb, currentColor 20%, transparent)",
+					"color": "#6FCF97",
 					"name": "Accent 6",
 					"slug": "accent-6"
+				},
+				{
+					"color": "#8c8b8b",
+					"name": "Accent 7",
+					"slug": "accent-7"
+				},
+				{
+					"color": "#f2eeed",
+					"name": "Accent 8",
+					"slug": "accent-8"
 				}
 			]
 		},
@@ -514,7 +529,7 @@
 				"elements": {
 					"button": {
 						"border": {
-							"radius": "3.125rem"
+							"radius": "6px"
 						},
 						"spacing": {
 							"margin": {
@@ -596,12 +611,12 @@
 		"elements": {
 			"button": {
 				"color": {
-					"background": "var:preset|color|contrast",
-					"text": "var:preset|color|base"
+					"background": "transparent",
+					"text": "var:preset|color|constrast"
 				},
 				":focus": {
 					"outline": {
-						"color": "var:preset|color|accent-4",
+						"color": "var:preset|color|base",
 						"offset": "2px"
 					}
 				},
@@ -616,14 +631,21 @@
 				},
 				"spacing": {
 					"padding": {
-						"bottom": "1rem",
-						"left": "2.25rem",
-						"right": "2.25rem",
-						"top": "1rem"
+						"bottom": "var(--wp--preset--spacing--20)",
+						"left": "var(--wp--preset--spacing--30)",
+						"right": "var(--wp--preset--spacing--30)",
+						"top": "var(--wp--preset--spacing--20)"
 					}
 				},
 				"typography": {
-					"fontSize": "var:preset|font-size|medium"
+					"fontSize": "var:preset|font-size|small",
+					"fontWeight": "700"
+				},
+				"border": {
+					"radius": "6px",
+					"width": "1px",
+					"style": "solid",
+					"color": "var:preset|color|constrast"
 				}
 			},
 			"caption": {
