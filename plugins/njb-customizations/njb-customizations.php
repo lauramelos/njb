@@ -28,8 +28,8 @@ const PLUGIN_FILE = __FILE__;
 function njbc_enqueue_assets() {
     $plugin_url = plugin_dir_url( __FILE__ );
 
-    wp_enqueue_style( 'njbc-style', $plugin_url . 'build/style.css', [], '1.0' );
-    wp_enqueue_script( 'njbc-script', $plugin_url . 'build/main.js', [], '1.0', true );
+    wp_enqueue_style( 'njbc-style', $plugin_url . 'build/style.css', [], VERSION );
+    wp_enqueue_script( 'njbc-script', $plugin_url . 'build/main.js', [], VERSION, true );
 }
 add_action( 'wp_enqueue_scripts', 'njbc_enqueue_assets' );
 

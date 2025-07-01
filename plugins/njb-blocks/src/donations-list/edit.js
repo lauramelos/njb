@@ -54,7 +54,6 @@ export default function Edit() {
 			{ donations && donations.length > 0 && (
 
 				// display all donations
-				console.log( donations[0] ),
 				donations.map( ( donation ) => (
 					<li key={ donation.id }>	
 						{ donation._embedded && donation._embedded['wp:featuredmedia'] && (
