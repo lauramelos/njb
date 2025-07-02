@@ -5,15 +5,16 @@
 	"version": "0.1.0",
 	"title": "Modal",
 	"category": "widgets",
-	"icon": "smiley",
-	"description": "Example block scaffolded with Create Block tool.",
+	"icon": "media-interactive",
+	"description": "An interactive block with the Interactivity API.",
 	"example": {},
 	"supports": {
-		"html": false
+		"interactivity": true
 	},
 	"textdomain": "modal",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
-	"viewScript": "file:./view.js"
+	"render": "file:./render.php",
+	"viewScriptModule": "file:./view.js"
 }
