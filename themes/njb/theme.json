@@ -178,6 +178,21 @@
 							"fontFamily": "Serif"
 						}
 					]
+				},{
+
+					"name": "Inter",
+					"slug": "inter",
+					"fontFamily": "Sans-Serif",
+					"fontFace": [
+						{
+							"src": [
+								"file:assets/fonts/inter/Inter-Regular.woff2"
+							],
+							"fontWeight": "200 800",
+							"fontStyle": "normal",
+							"fontFamily": "Sans-Serif"
+						}
+					]
 				}
 			]
 		},

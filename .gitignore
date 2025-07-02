@@ -24,6 +24,7 @@ node_modules/
 # Ignore assets except source files
 **/build/*
 **/assets/*
+!**/assets/fonts
 !**/assets/source
 !**/assets/source/css
 !**/assets/source/js
