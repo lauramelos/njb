@@ -3,8 +3,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Function to check the scroll position and update the class
     function updateStickyElements() {
-        console.log("Checking scroll position...");
-        console.log("Current scroll position:", window.scrollY);
+
         if (window.scrollY > 770 ) {
             document.querySelectorAll(".is-position-sticky").forEach(function (element) {
                 element.classList.add("opaque");
