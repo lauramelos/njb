@@ -5,24 +5,42 @@ import { store, getContext } from '@wordpress/interactivity';
 
 const { state } = store( 'create-block', {
 	state: {
-		get themeText() {
-			return state.isDark ? state.darkText : state.lightText;
-		}
+		isOpen: false,
 	},
 	actions: {
-		toggleOpen() {
+		openModal() {
 			const context = getContext();
 			context.isOpen = ! context.isOpen;
 		},
-		toggleTheme() {
-			state.isDark = ! state.isDark;
+		closeModal() {
+			const context = getContext();
+			context.isOpen = false;
+		},
+		handleEscClose(e) {
+			if ( e.key === 'Escape' || e.keyCode === 27 ) {
+				const context = getContext();
+				context.isOpen = false;
+			}
 		}
 	},
 	callbacks: {
-		logIsOpen: () => {
-			const { isOpen } = getContext();
-			// Log the value of `isOpen` each time it changes.
-			console.log( `Is open: ${ isOpen }` );
+		handleEscClose(e) {
+			if ( e.key === 'Escape' || e.keyCode === 27 ) {
+				const context = getContext();
+				context.isOpen = false;
+		}
 		},
-	},
+		handleClickOutside(event) {
+			const context = getContext();
+			if ( ! context.isOpen ) {
+				return;
+			}
+
+			if ( !event.target.closest('.modal__content') &&
+			  	!event.target.closest('.js-show-modal')
+			) {
+			  context.isOpen = false;
+			}
+		}
+	}
 } );

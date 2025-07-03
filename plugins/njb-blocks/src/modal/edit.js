@@ -11,7 +11,15 @@ import { __ } from '@wordpress/i18n';
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
-import { useBlockProps } from '@wordpress/block-editor';
+import { useBlockProps, useInnerBlocksProps, InnerBlocks,InspectorControls } from '@wordpress/block-editor';
+ 
+/**
+ * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
+ * Those files can contain any CSS code that gets applied to the editor.
+ *
+ * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
+ */
+import './editor.scss';
 
 /**
  * The edit function describes the structure of your block in the context of the
@@ -25,12 +33,57 @@ import { useBlockProps } from '@wordpress/block-editor';
  *
  * @return {Element} Element to render.
  */
-export default function Edit( { attributes, setAttributes } ) {
+
+import { useState } from 'react';
+import { Button, Modal, PanelBody, TextControl } from '@wordpress/components';
+
+export default function Edit( props  ) {
 	const blockProps = useBlockProps();
-	
-	return (
-		<p { ...blockProps }>
-			{ __( 'Modal – hello from the editor!', 'modal' ) }
-		</p>
-	);
+	const innerBlocksProps = useInnerBlocksProps( blockProps );
+	const [ isOpen, setOpen ] = useState( false );
+    const openModal = () => setOpen( true );
+    const closeModal = () => setOpen( false );
+
+	function updateButtonText(value) {
+		props.setAttributes({ buttonText: value });
+	}
+    return (
+		 <div {...innerBlocksProps}>
+			<InspectorControls>
+                <PanelBody title={ __( 'Button Settings', 'njb-blocks' ) }>
+                    <TextControl
+                        label={ __( 'Button Text', 'njb-blocks' ) }
+                        value={ props.attributes.buttonText }
+                        onChange={ ( value ) => updateButtonText( value ) }
+                        placeholder={ __( 'Enter button text...', 'njb-blocks' ) }
+                    />
+                </PanelBody>
+            </InspectorControls>
+			<Button className="wp-modal-button" onClick={ openModal }>
+				{ props.attributes.buttonText || __( 'Open Modal', 'njb-blocks' ) }
+            </Button>
+            { isOpen && (
+                <Modal onRequestClose={ closeModal }>
+                    <Button variant="secondary" onClick={ closeModal }>
+					<InnerBlocks
+						allowedBlocks={ [ 'core/button', 'core/paragraph', 'core/image', 'core/heading', 'core/list', 'core/shortcode', 'wpforms/form-selector', ] }
+						template={ [
+							[ 'core/group', { lock: { move: true, remove: true }, tagName: 'div', className: 'modal-content' } , 
+								[[ 'core/paragraph', { placeholder: __( 'Add your modal content here...', 'njb-blocks' ) } ]],
+							],
+						]}
+					/>
+                    </Button>
+                </Modal>
+            ) }
+			<InnerBlocks
+						allowedBlocks={ [ 'core/button', 'core/paragraph', 'core/image', 'core/heading', 'core/list', 'core/shortcode', 'wpforms/form-selector', ] }
+						template={ [
+							[ 'core/group', { lock: { move: true, remove: true }, tagName: 'div', className: 'modal-content' } , 
+								[[ 'core/paragraph', { placeholder: __( 'Add your modal content here...', 'njb-blocks' ) } ]],
+							],
+						]}
+					/>
+		 </div>
+    );
 }

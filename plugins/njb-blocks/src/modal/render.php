@@ -1,56 +1,32 @@
-<?php
-/**
- * PHP file to use when rendering the block type on the server to show on the front end.
- *
- * The following variables are exposed to the file:
- *     $attributes (array): The block attributes.
- *     $content (string): The block default content.
- *     $block (WP_Block): The block instance.
- *
- * @see https://github.com/WordPress/gutenberg/blob/trunk/docs/reference-guides/block-api/block-metadata.md#render
- */
-
-// Generates a unique id for aria-controls.
-$unique_id = wp_unique_id( 'p-' );
-
-// Adds the global state.
-wp_interactivity_state(
-	'create-block',
-	array(
-		'isDark'    => false,
-		'darkText'  => esc_html__( 'Switch to Light', 'modal' ),
-		'lightText' => esc_html__( 'Switch to Dark', 'modal' ),
-		'themeText'	=> esc_html__( 'Switch to Dark', 'modal' ),
-	)
-);
-?>
+<?php  wp_interactivity_state( 'create-block', array()); ?>
 
 <div
-	<?php echo get_block_wrapper_attributes(); ?>
-	data-wp-interactive="create-block"
-	<?php echo wp_interactivity_data_wp_context( array( 'isOpen' => false ) ); ?>
-	data-wp-watch="callbacks.logIsOpen"
-	data-wp-class--dark-theme="state.isDark"
->
-	<button
-		data-wp-on--click="actions.toggleTheme"
-		data-wp-text="state.themeText"
-	></button>
+    <?php echo get_block_wrapper_attributes(  array( 'isOpen' => false ) ); ?>
+    data-wp-interactive="create-block" 
+    <?php echo wp_interactivity_data_wp_context( array( 'isOpen' => false ) ); ?>
+        data-wp-on-document--keydown="callbacks.handleEscClose"
+        data-wp-on-document--click="callbacks.handleClickOutside"
+    >
+    <?php if ( ! empty( $content ) ) { 
+        $button_text = ! empty( $attributes['buttonText'] ) ? $attributes['buttonText'] : __( 'Show Modal', 'njb-blocks' );
+        ?>
+        <button class="btn js-show-modal" data-wp-on--click="actions.openModal"> 
+            <?php echo esc_html( $button_text ); ?>
+        </button>
+        <div class="container">
+        <div class="modal js-modal" data-wp-class--modal--opened="context.isOpen">
+            <div class="modal__overlay"></div>
+            <div class="modal__content">
+                <button class="modal__close js-close-modal" data-wp-on--click="actions.closeModal">X
+                    <i class="bx bx-x-circle"></i>
+                </button>
+                <?php echo $content; ?>
+                <div class="modal__action">
+                    <button class="btn js-close-modal" data-wp-on--click="actions.closeModal">Close</button>
+                </div>
+            </div>
 
-	<button
-		data-wp-on--click="actions.toggleOpen"
-		data-wp-bind--aria-expanded="context.isOpen"
-		aria-controls="<?php echo esc_attr( $unique_id ); ?>"
-	>
-		<?php esc_html_e( 'Toggle', 'modal' ); ?>
-	</button>
-
-	<p
-		id="<?php echo esc_attr( $unique_id ); ?>"
-		data-wp-bind--hidden="!context.isOpen"
-	>
-		<?php
-			esc_html_e( 'Modal - hello from an interactive block!', 'modal' );
-		?>
-	</p>
+            </div>
+         </div>
+    <?php } ?>
 </div>

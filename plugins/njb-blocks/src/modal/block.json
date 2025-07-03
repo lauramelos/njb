@@ -8,6 +8,9 @@
 	"icon": "media-interactive",
 	"description": "An interactive block with the Interactivity API.",
 	"example": {},
+	"attributes": {
+		"buttonText": { "type": "string" }
+	},
 	"supports": {
 		"interactivity": true
 	},

@@ -3,10 +3,22 @@
  *
  * Replace them with your own styles or remove the file completely.
  */
-
-.wp-block-create-block-modal input[type="text"] {
-	font-size: 1em;
-	color: inherit;
-	background: inherit;
-	border: 0;
+.wp-modal-button {
+    background-color: rgb(237, 98, 91);
+    color: rgb(255, 255, 255);
+    padding-top: var(--wp--preset--spacing--20);
+    padding-right: var(--wp--preset--spacing--50);
+    padding-bottom: var(--wp--preset--spacing--20);
+    padding-left: var(--wp--preset--spacing--50);
+    white-space: pre-wrap;
+    min-width: 1px;
+    font-family: var(--wp--preset--font-family--inter) !important;
+    color: var(--wp--preset--color--white) !important;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: var(--wp--preset--font-size--small);
+    line-height: 1.2;
+    height: auto;
 }
