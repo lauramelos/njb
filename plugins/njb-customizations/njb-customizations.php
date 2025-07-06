@@ -21,7 +21,7 @@ if ( ! defined( 'NJB_PLUGIN_FILE' ) ) {
 }
 
 // Define constants.
-const VERSION     = '0.1.0';
+const VERSION     = '0.1.11';
 const PLUGIN_FILE = __FILE__;
 
 
@@ -52,3 +52,9 @@ function run_njb_customizations() {
     $plugin->run();
 }
 add_action( 'plugins_loaded', 'run_njb_customizations' );
+
+add_action( 'acf/init', 'set_acf_settings' );
+function set_acf_settings() {
+    acf_update_setting( 'enable_shortcode', true );
+}
+add_filter('acf/settings/remove_wp_meta_box', '__return_false');

@@ -1,7 +1,55 @@
 /* 
 This file is intentionally left blank. 
 */
+@media (max-width: 640px) {
+/* Styles for screens smaller than 640px (small breakpoint) */
 
+    .header-container {
+        .wp-block-navigation {
+            order:3;
+        }
+        .wp-block-create-block-modal .btn.js-show-modal{
+            margin-right: 40px;
+            margin-left: 0;
+        }    
+    }
+    footer{
+       .wp-block-group-is-layout-grid{
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            justify-items: center;
+            .footer-logo {
+                text-align: center;
+            }
+        }
+    }
+
+    .home-about{
+        .is-layout-grid > * {
+            grid-column: span 3;
+            text-align: center;
+        }
+    }
+    .membership-about-home {
+        .is-layout-grid > * {
+            grid-column: span 6;
+        }
+    }
+    .membership-home{
+        .wc-block-product-template {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+/* Styles for screens between 641px and 1024px (medium breakpoint) */
+}
+
+@media (min-width: 1025px) {
+/* Styles for screens larger than 1024px (large breakpoint) */
+
+}
+/*events calendar styles*/
 .ecs-event-list {
     list-style: none;
     padding: 0;
@@ -73,22 +121,19 @@ This file is intentionally left blank.
 .tribe-block.tec-block__archive-events {
     margin-top: 0;
 }
+
+/* miscellaneous styles */
 .wp-block-site-title{
     flex-grow: 4;
  }
- .uagb-modal-wrapper.adjust_width{
-    width: auto;
-    margin-left: 50px;
- }
+
  .wpforms-container input.wpforms-field-medium, .wpforms-container select.wpforms-field-medium, .wpforms-container .wpforms-field-row.wpforms-field-medium, .wp-core-ui div.wpforms-container input.wpforms-field-medium, .wp-core-ui div.wpforms-container select.wpforms-field-medium, .wp-core-ui div.wpforms-container .wpforms-field-row.wpforms-field-medium {
     max-width: 100% !important;
  }
  .wpforms-container input.wpforms-field-medium{
     max-width: 100% !important;
  }
- .wp-block-navigation__container{
 
- }
 .wp-block-button {
     .uagb-modal-trigger,
     .has-coral-background-color {
@@ -107,16 +152,32 @@ This file is intentionally left blank.
     }
  }
 
- .is-position-sticky {
+.header-container.is-position-sticky {
     transition: background-color 0.6s ease;
+    color: var(--wp--preset--color--white) !important;
     &.opaque {
         background-color: var(--wp--preset--color--white) !important;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        .wp-block-navigation__responsive-container-open,
         li.wp-block-navigation-item > a {
             color: var(--wp--preset--color--contrast) !important;
         }
     }
- }
+}
+
+.page-template-default{
+    .header-container.is-position-sticky {
+        transition: background-color 0.6s ease;
+        
+        &.opaque {
+            background-color: var(--wp--preset--color--white) !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            li.wp-block-navigation-item > a {
+                color: var(--wp--preset--color--contrast) !important;
+            }
+        }
+    }
+}
 
  .wp-block-cover.contain {
     .wp-block-cover__image-background {
@@ -157,4 +218,8 @@ This file is intentionally left blank.
 }
 .hr-wider{
     border-bottom: 5px solid!important;
+}
+
+.home-about{
+
 }

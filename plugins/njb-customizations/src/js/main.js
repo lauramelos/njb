@@ -3,15 +3,20 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Function to check the scroll position and update the class
     function updateStickyElements() {
-
-        if (window.scrollY > 770 ) {
-            document.querySelectorAll(".is-position-sticky").forEach(function (element) {
+        if ( ! document.body.classList.contains("page-template-page-no-title") ) {
+            document.querySelectorAll(".header-container.is-position-sticky").forEach(function (element) {
                 element.classList.add("opaque");
             });
         } else {
-            document.querySelectorAll(".is-position-sticky").forEach(function (element) {
-                element.classList.remove("opaque");
-            });
+            if ( window.scrollY > 770 ) {
+                document.querySelectorAll(".header-container.is-position-sticky").forEach(function (element) {
+                    element.classList.add("opaque");
+                });
+            } else {
+                document.querySelectorAll(".header-container.is-position-sticky").forEach(function (element) {
+                    element.classList.remove("opaque");
+                });
+            }
         }
     }
 
