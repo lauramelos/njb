@@ -109,55 +109,82 @@
 			"fluid": true,
 			"fontSizes": [
 				{
-					"fluid": false,
+					"fluid": {
+						"min": "1rem",
+						"max": "1.25rem"
+					},
 					"name": "XSmall",
 					"size": "1.25rem",
 					"slug": "xsmall"
 				},
 				{
-					"fluid": false,
+					"fluid": {
+						"min": "1.25rem",
+						"max": "1.5rem"
+					},
 					"name": "Small",
 					"size": "1.5rem",
 					"slug": "small"
 				},
 				{
-					"fluid": false,
+					"fluid": {
+						"min": "1.25rem",
+						"max": "1.875rem"
+					},
 					"name": "Medium",
 					"size": "1.875rem",
 					"slug": "medium"
 				},
 				{
-					"fluid": false,
+					"fluid": {
+						"min": "1.25rem",
+						"max": "2rem"
+					},
 					"name": "Regular",
 					"size": "2rem",
 					"slug": "regular"
 				},
 				{
-					"fluid": false,
+					"fluid": {
+						"min": "1.5rem",
+						"max": "2.25rem"
+					},
 					"name": "Large",
 					"size": "2.25rem",
 					"slug": "large"
 				},
 				{
-					"fluid": false,
+					"fluid": {
+						"min": "2rem",
+						"max": "3rem"
+					},
 					"name": "Extra Large",
 					"size": "3rem",
 					"slug": "x-large"
 				},
 				{
-					"fluid": false,
+					"fluid": {
+						"min": "2.5rem",
+						"max": "3.75rem"
+					},
 					"name": "Extra Extra Large",
 					"size": "3.75rem",
 					"slug": "xx-large"
 				},
 				{
-					"fluid": false,
+					"fluid": {
+						"min": "3rem",
+						"max": "4rem"
+					},
 					"name": "Big",
 					"size": "4rem",
 					"slug": "big"
 				},
 				{
-					"fluid": false,
+					"fluid": {
+						"min": "4rem",
+						"max": "6rem"
+					},
 					"name": "Huge",
 					"size": "6rem",
 					"slug": "huge"
