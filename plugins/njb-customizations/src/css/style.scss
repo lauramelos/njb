@@ -39,6 +39,14 @@ This file is intentionally left blank.
             grid-template-columns: repeat(1, minmax(0, 1fr));
         }
     }
+    .founder_message {
+        grid-template-columns: repeat(1, minmax(0, 1fr)); 
+
+    }
+}
+
+.event-loop-grid {
+    grid-template-rows: 30px 1px 170px 50px 100px
 }
 
 @media (min-width: 641px) and (max-width: 1024px) {
@@ -48,6 +56,10 @@ This file is intentionally left blank.
 @media (min-width: 1025px) {
 /* Styles for screens larger than 1024px (large breakpoint) */
 
+}
+
+strong {
+    font-weight: 700!important;
 }
 /*events calendar styles*/
 .ecs-event-list {
@@ -220,6 +232,3 @@ This file is intentionally left blank.
     border-bottom: 5px solid!important;
 }
 
-.home-about{
-
-}

@@ -3,7 +3,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Function to check the scroll position and update the class
     function updateStickyElements() {
-        if ( ! document.body.classList.contains("page-template-page-no-title") ) {
+        if ( ! ( document.body.classList.contains("page-template-page-no-title") || document.body.classList.contains("page-template-default") ) ) {
             document.querySelectorAll(".header-container.is-position-sticky").forEach(function (element) {
                 element.classList.add("opaque");
             });
