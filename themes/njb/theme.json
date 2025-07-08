@@ -192,9 +192,24 @@
 			],
 			"fontFamilies": [
 				{
+					"name": "Lato",
+					"slug": "lato",
+					"fontFamily": "Lato, Sans-Serif",
+					"fontFace": [
+						{
+							"src": [
+								"file:assets/fonts/Lato/LatoLatin-Regular.woff2"
+							],
+							"fontWeight": "200 800",
+							"fontStyle": "normal",
+							"fontFamily": "Lato"
+						}
+					]
+				},
+				{
 					"name": "InriaSerif",
 					"slug": "inriaserif",
-					"fontFamily": "Serif",
+					"fontFamily": "InriaSerif,Serif",
 					"fontFace": [
 						{
 							"src": [
@@ -202,14 +217,14 @@
 							],
 							"fontWeight": "200 800",
 							"fontStyle": "normal",
-							"fontFamily": "Serif"
+							"fontFamily": "InriaSerif"
 						}
 					]
 				},{
 
 					"name": "Inter",
 					"slug": "inter",
-					"fontFamily": "Sans-Serif",
+					"fontFamily": "Inter,Sans-Serif",
 					"fontFace": [
 						{
 							"src": [
@@ -217,7 +232,7 @@
 							],
 							"fontWeight": "200 800",
 							"fontStyle": "normal",
-							"fontFamily": "Sans-Serif"
+							"fontFamily": "Inter"
 						}
 					]
 				}
