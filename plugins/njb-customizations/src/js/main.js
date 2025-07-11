@@ -3,20 +3,18 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Function to check the scroll position and update the class
     function updateStickyElements() {
-        if ( ! ( document.body.classList.contains("page-template-page-no-title") || document.body.classList.contains("page-template-default") ) ) {
+        if ( window.scrollY > 770 ) {
             document.querySelectorAll(".header-container.is-position-sticky").forEach(function (element) {
-                element.classList.add("opaque");
+                if ( ! element.classList.contains("opaque")) {
+                    element.classList.add("opaque");
+                }
             });
         } else {
-            if ( window.scrollY > 770 ) {
-                document.querySelectorAll(".header-container.is-position-sticky").forEach(function (element) {
-                    element.classList.add("opaque");
-                });
-            } else {
-                document.querySelectorAll(".header-container.is-position-sticky").forEach(function (element) {
+            document.querySelectorAll(".header-container.is-position-sticky").forEach(function (element) {
+                if ( ! element.classList.contains("keep-opaque")) {
                     element.classList.remove("opaque");
-                });
-            }
+                }
+            });
         }
     }
 
