@@ -109,130 +109,91 @@
 			"fluid": true,
 			"fontSizes": [
 				{
-					"fluid": {
-						"min": "1rem",
-						"max": "1.25rem"
-					},
-					"name": "XSmall",
-					"size": "1.25rem",
-					"slug": "xsmall"
-				},
-				{
-					"fluid": {
-						"min": "1.25rem",
-						"max": "1.5rem"
-					},
+					"fluid": false,
 					"name": "Small",
-					"size": "1.5rem",
+					"size": "0.813rem",
 					"slug": "small"
 				},
 				{
-					"fluid": {
-						"min": "1.25rem",
-						"max": "1.875rem"
-					},
-					"name": "Medium",
-					"size": "1.875rem",
-					"slug": "medium"
-				},
-				{
-					"fluid": {
-						"min": "1.25rem",
-						"max": "2rem"
-					},
+					"fluid": false,
 					"name": "Regular",
-					"size": "2rem",
+					"size": "0.875rem",
 					"slug": "regular"
 				},
 				{
 					"fluid": {
-						"min": "1.5rem",
-						"max": "2.25rem"
+						"min": "1rem",
+						"max": "2.188rem"
 					},
 					"name": "Large",
-					"size": "2.25rem",
+					"size": "2.188rem",
 					"slug": "large"
 				},
 				{
 					"fluid": {
-						"min": "2rem",
-						"max": "3rem"
+						"min": "1.5rem",
+						"max": "2.5rem"
 					},
 					"name": "Extra Large",
-					"size": "3rem",
+					"size": "2.5rem",
 					"slug": "x-large"
 				},
 				{
 					"fluid": {
-						"min": "2.5rem",
-						"max": "3.75rem"
+						"min": "2rem",
+						"max": "3.125rem"
 					},
 					"name": "Extra Extra Large",
-					"size": "3.75rem",
+					"size": "3.125rem",
 					"slug": "xx-large"
 				},
 				{
 					"fluid": {
-						"min": "3rem",
-						"max": "4rem"
+						"min": "2.5rem",
+						"max": "4.375rem"
 					},
 					"name": "Big",
-					"size": "4rem",
+					"size": "4.375rem",
 					"slug": "big"
 				},
 				{
 					"fluid": {
 						"min": "4rem",
-						"max": "6rem"
+						"max": "6.25rem"
 					},
 					"name": "Huge",
-					"size": "6rem",
+					"size": "6.25rem",
 					"slug": "huge"
 				}
 			],
 			"fontFamilies": [
 				{
-					"name": "Lato",
-					"slug": "lato",
-					"fontFamily": "Lato, Sans-Serif",
+					"name": "Cormorant",
+					"slug": "cormorant",
+					"fontFamily": "Cormorant, Serif",
 					"fontFace": [
 						{
 							"src": [
-								"file:assets/fonts/Lato/LatoLatin-Regular.woff2"
+								"file:./assets/fonts/Cormorant/Cormorant-VariableFont_wght.ttf"
 							],
 							"fontWeight": "200 800",
 							"fontStyle": "normal",
-							"fontFamily": "Lato"
+							"fontFamily": "Cormorant"
 						}
 					]
 				},
 				{
-					"name": "InriaSerif",
-					"slug": "inriaserif",
-					"fontFamily": "InriaSerif,Serif",
+					"name": "Montserrat",
+					"slug": "montserrat",
+					"fontFamily": "Montserrat, Sans-Serif",
 					"fontFace": [
 						{
 							"src": [
-								"file:assets/fonts/Inria_Serif/inria-serif-v17-latin-regular.woff2"
+								"file:./assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf"
 							],
 							"fontWeight": "200 800",
 							"fontStyle": "normal",
-							"fontFamily": "InriaSerif"
-						}
-					]
-				},{
-
-					"name": "Inter",
-					"slug": "inter",
-					"fontFamily": "Inter,Sans-Serif",
-					"fontFace": [
-						{
-							"src": [
-								"file:assets/fonts/inter/Inter-Regular.woff2"
-							],
-							"fontWeight": "200 800",
-							"fontStyle": "normal",
-							"fontFamily": "Inter"
+							"fontFamily": "Montserrat"
 						}
 					]
 				}
@@ -253,11 +214,11 @@
 			}
 		},
 		"typography": {
-			"fontFamily": "var:preset|font-family|Inriaserif",
-			"fontSize": "var:preset|font-size|large",
-			"fontWeight": "300",
-			"letterSpacing": "-0.1px",
-			"lineHeight": "1.2"
+			"fontFamily": "var:preset|font-family|montserrat",
+			"fontSize": "var:preset|font-size|regular",
+			"fontWeight": "400",
+			"letterSpacing": "0",
+			"lineHeight": "1.85"
 		},
 		"blocks": {
 			"core/avatar": {
@@ -646,46 +607,53 @@
 			},
 			"core/list": {
 				"css": "& li{margin-top: 0.5rem;}"
+			},
+			"woocommerce/product-button": {
+				"border": {
+					"style": "solid!important"
+				}
 			}
 		},
 		"elements": {
 			"button": {
 				"color": {
-					"background": "transparent",
-					"text": "var:preset|color|constrast"
+					"background": "var:preset|color|coral",
+					"text": "var:preset|color|white"
 				},
 				":focus": {
 					"outline": {
-						"color": "var:preset|color|base",
+						"color": "var:preset|color|coral",
 						"offset": "2px"
 					}
 				},
 				":hover": {
 					"color": {
-						"background": "color-mix(in srgb, var(--wp--preset--color--contrast) 85%, transparent)",
-						"text": "var:preset|color|base"
+						"background": "color-mix(in srgb, var(--wp--preset--color--coral) 15%, transparent)",
+						"text": "var:preset|color|coral"
 					},
 					"border": {
-						"color": "transparent"
+						"color": "var:preset|color|coral"
 					}
 				},
 				"spacing": {
 					"padding": {
 						"bottom": "var(--wp--preset--spacing--20)",
-						"left": "var(--wp--preset--spacing--30)",
-						"right": "var(--wp--preset--spacing--30)",
+						"left": "var(--wp--preset--spacing--40)",
+						"right": "var(--wp--preset--spacing--40)",
 						"top": "var(--wp--preset--spacing--20)"
 					}
 				},
 				"typography": {
 					"fontSize": "var:preset|font-size|small",
-					"fontWeight": "700"
+					"fontWeight": "400",
+					"letterSpacing": "2px",
+					"textTransform": "uppercase"
 				},
 				"border": {
 					"radius": "6px",
 					"width": "1px",
 					"style": "solid",
-					"color": "var:preset|color|constrast"
+					"color": "var:preset|color|coral"
 				}
 			},
 			"caption": {
@@ -696,43 +664,42 @@
 			},
 			"h1": {
 				"typography": {
-					"fontSize": "var:preset|font-size|xx-large"
+					"fontSize": "var:preset|font-size|huge"
 				}
 			},
 			"h2": {
 				"typography": {
-					"fontSize": "var:preset|font-size|x-large"
+					"fontSize": "var:preset|font-size|big"
 				}
 			},
 			"h3": {
 				"typography": {
-					"fontSize": "var:preset|font-size|large"
+					"fontSize": "var:preset|font-size|xx-large"
 				}
 			},
 			"h4": {
 				"typography": {
-					"fontSize": "var:preset|font-size|regular"
+					"fontSize": "var:preset|font-size|x-large"
 				}
 			},
 			"h5": {
 				"typography": {
-					"fontSize": "var:preset|font-size|small",
+					"fontSize": "var:preset|font-size|large",
 					"letterSpacing": "0.5px"
 				}
 			},
 			"h6": {
 				"typography": {
+					"fontFamily": "var:preset|font-family|montserrat",
 					"fontSize": "var:preset|font-size|small",
-					"fontWeight": "700",
-					"letterSpacing": "1.4px",
+					"fontWeight": "400",
+					"letterSpacing": "2px",
 					"textTransform": "uppercase"
 				}
 			},
 			"heading": {
 				"typography": {
-					"fontWeight": "400",
-					"lineHeight": "1.125",
-					"letterSpacing": "-0.1px"
+					"fontFamily": "var:preset|font-family|cormorant"
 				}
 			},
 			"link": {
