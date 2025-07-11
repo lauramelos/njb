@@ -46,7 +46,7 @@ This file is intentionally left blank.
 }
 
 .event-loop-grid {
-    grid-template-rows: 30px 1px 170px 50px 100px
+    grid-template-rows: 30px 1px auto 50px 100px
 }
 
 @media (min-width: 641px) and (max-width: 1024px) {
@@ -56,6 +56,27 @@ This file is intentionally left blank.
 @media (min-width: 1025px) {
 /* Styles for screens larger than 1024px (large breakpoint) */
 
+}
+.wpforms-container{
+    width:100%;
+    .wpforms-submit-container{
+        text-align: center;
+    }
+}
+textarea,
+input {
+    background-color: var(--wp--preset--color--white);
+    border-radius: 6px;
+    color: var(--wp--preset--color--contrast);
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--wp--preset--color--coral);
+    padding: 14px 10px;
+    line-height: 100%;
+    box-shadow: none;
+    transition: border 0.15s, box-shadow 0.15s;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 strong {
@@ -197,37 +218,6 @@ strong {
     }
  }
 
- .wpforms-container-full.subscribe-form{
-    width: 100% !important;
-    .wpforms-field-medium {
-       border-color: var(--wp--preset--color--coral) !important;
-    }
-    .wpforms-submit-container {
-        text-align: center !important;
-        .wpforms-submit{
-            border-radius: 6px !important;
-            box-sizing: content-box !important;
-            background-color: var(--wp--preset--color--coral)!important;
-            padding: 8px 60px !important;
-            font-family: Inter !important;
-            font-weight: 700 !important;
-            font-size: var(--wp--preset--font-size--small)!important;
-            transition: background-color 0.3s ease;
-            border:1px solid  var(--wp--preset--color--coral)!important;
-            &:hover {
-                background: none !important;
-                background-color: transparent !important;
-                color: var(--wp--preset--color--coral) !important;
-            
-            }
-            &:focus {
-                background-color: transparent !important;
-                outline: 1px solid var(--wp--preset--color--accent-2);
-                outline-offset: 1px;
-            }
-        }
-    }
-}
 .hr-wider{
     border-bottom: 5px solid!important;
 }
