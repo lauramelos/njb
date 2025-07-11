@@ -10,7 +10,7 @@
     <?php if ( ! empty( $content ) ) { 
         $button_text = ! empty( $attributes['buttonText'] ) ? $attributes['buttonText'] : __( 'Show Modal', 'njb-blocks' );
         ?>
-        <button class="btn js-show-modal" data-wp-on--click="actions.openModal"> 
+        <button class="wp-element-button js-show-modal " data-wp-on--click="actions.openModal"> 
             <?php echo esc_html( $button_text ); ?>
         </button>
         <div class="container">
