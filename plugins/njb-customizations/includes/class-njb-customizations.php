@@ -15,6 +15,7 @@ class NJB_Customizations {
         add_action( 'woocommerce_init', array( __CLASS__, 'add_whatsapp_number' ) );
         add_action( 'acf/init', array( __CLASS__, 'set_acf_settings' ) );
         add_filter( 'render_block_core/query', array( __CLASS__, 'query_carousel_block' ), 10, 2 );
+        add_action( 'tribe_events_single_event_after_the_content', array( __CLASS__, 'event_add_external_link' ), 10, 2 );
     }
 
     /**
@@ -107,4 +108,29 @@ class NJB_Customizations {
         return $block_content;
     }
 
+    /**
+     * Add an external link to the event if the event has ended and an external link is set.
+     *
+     * @return void
+     */
+    public static function event_add_external_link(){
+        global $post;
+        $event = $post->ID;
+        if ( ! tribe_is_event( $event ) ){
+            return false;
+        }
+        $event = tribe_events_get_event( $event );
+
+        if (  time() < strtotime( $event->end_date ) || empty( get_field('external_link') ) ) {
+            return false;
+        }
+        
+        ?>
+        <div class="wp-block-buttons is-content-justification-center is-layout-flex  wp-block-buttons-is-layout-flex">
+            <div class="wp-block-button">
+                <a class="wp-block-button__link wp-element-button" href="<?php echo get_field('external_link') ?>">Register to Event</a>
+            </div>
+        </div>
+        <?php
+    }
 }
