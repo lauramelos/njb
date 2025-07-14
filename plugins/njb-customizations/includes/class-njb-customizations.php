@@ -14,7 +14,8 @@ class NJB_Customizations {
         add_filter( 'excerpt_length', array( __CLASS__, 'custom_excerpt_length' ) );
         add_action( 'woocommerce_init', array( __CLASS__, 'add_whatsapp_number' ) );
         add_action( 'acf/init', array( __CLASS__, 'set_acf_settings' ) );
-     }
+        add_filter( 'render_block_core/query', array( __CLASS__, 'query_carousel_block' ), 10, 2 );
+    }
 
     /**
      * Custom excerpt more text.
@@ -68,4 +69,42 @@ class NJB_Customizations {
     public static function set_acf_settings() {
         acf_update_setting( 'enable_shortcode', true );
     }
+
+    /**
+     * Replace last instance of search from a given string
+     *
+     * @param string $search String to search for.
+     * @param string $replace String to replace with.
+     * @param string $subject Subject.
+     * @return string
+     */
+    public static function str_replace_last( $search, $replace, $subject ) {
+        if ( ( $pos = strrpos( $subject, $search ) ) !== false ) { // phpcs:ignore
+            $search_length = strlen( $search );
+            $subject       = substr_replace( $subject, $replace, $pos, $search_length );
+        }
+        return $subject;
+    }
+
+
+    /**
+     * Add Splide markup to query carousel
+     *
+     * @param string $block_content Block content.
+     * @param array  $block Block object.
+     * @return string
+     */
+    public static function query_carousel_block( $block_content, $block ) {
+        $is_carousel = false !== strpos( $block['attrs']['className'] ?? '', 'is-style-carousel' );
+        if ( $is_carousel ) {
+            $block_content = preg_replace( '/is\-style\-carousel/', 'is-style-carousel splide', $block_content, 1 );
+            $block_content = preg_replace( '/wp\-block\-post\-template/', 'wp-block-post-template splide__list', $block_content, 1 );
+            $block_content = preg_replace( '/\<ul/', '<div class="splide__track"><ul', $block_content, 1 );
+            $block_content = self::str_replace_last( '</ul>', '</ul></div>', $block_content );
+            $block_content = preg_replace( '/wp\-block\-post\s/', 'wp-block-post splide__slide ', $block_content );
+        }
+
+        return $block_content;
+    }
+
 }

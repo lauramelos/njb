@@ -1,17 +1,9 @@
-/* 
-This file is intentionally left blank. 
-*/
+@use '@splidejs/splide/css';
+
 @media (max-width: 640px) {
 /* Styles for screens smaller than 640px (small breakpoint) */
-
-    .header-container {
-        .wp-block-navigation {
-            order:3;
-        }
-        .wp-block-create-block-modal .btn.js-show-modal{
-            margin-right: 40px;
-            margin-left: 0;
-        }    
+    .wp-block-site-logo {
+        width: 70%;
     }
     footer{
        .wp-block-group-is-layout-grid{
@@ -58,7 +50,7 @@ This file is intentionally left blank.
 
 }
 .wpforms-container{
-    width:100%;
+    width:100%!important;
     .wpforms-submit-container{
         text-align: center;
     }
@@ -77,6 +69,9 @@ input {
     transition: border 0.15s, box-shadow 0.15s;
     width: 100%;
     box-sizing: border-box;
+}
+.center-aligned{
+    text-align: center;
 }
 
 strong {
@@ -191,10 +186,22 @@ strong {
     &.opaque {
         background-color: var(--wp--preset--color--white) !important;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        .wp-block-navigation__responsive-container-open,
         li.wp-block-navigation-item > a {
             color: var(--wp--preset--color--contrast) !important;
         }
+    }
+    .wp-block-navigation__responsive-container-open {
+        color: var(--wp--preset--color--white) !important;
+        background-color: var(--wp--preset--color--coral) !important;
+        border: 1px solid var(--wp--preset--color--coral) !important;
+        border-radius: 6px;
+        padding: 10px;
+        &:hover, &:focus {
+            background-color: transparent !important;
+            color: var(--wp--preset--color--coral) !important;
+            border-color: var(--wp--preset--color--coral) !important;
+        }
+
     }
 }
 
@@ -221,4 +228,32 @@ strong {
 .hr-wider{
     border-bottom: 5px solid!important;
 }
-
+.donation-thumbnail{
+    justify-self: center;
+}
+.is-style-carousel{
+    .splide__slide {
+        padding: 0 3em;
+    }
+    .splide__pagination {
+        bottom: -3em;
+    }
+}
+.splide__arrow {
+    background: transparent!important;
+    opacity: 1!important;
+    &:focus {
+        outline: none!important;
+    }
+    svg {
+        height: 2em!important;
+        fill: var(--wp--preset--color--coral)!important;
+       
+    }
+    &--prev{
+        left: 0!important;
+    }
+    &--next{
+        right: 0!important;
+    }
+}

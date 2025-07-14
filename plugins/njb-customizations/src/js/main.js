@@ -24,3 +24,27 @@ document.addEventListener("DOMContentLoaded", function () {
     // Add scroll event listener to update the class dynamically
     window.addEventListener("scroll", updateStickyElements);
 });
+import Splide from '@splidejs/splide';
+
+document.addEventListener( 'DOMContentLoaded', function() {
+    var splide = new Splide( '.is-style-carousel', {
+        type: 'loop',
+        perPage: 3,
+        perMove: 1,
+        gap: 0,
+        pagination: true,
+        breakpoints: {
+            '640': {
+                perPage: 1,
+            },
+            '768': {
+                perPage: 2,
+            },
+            '1340': {
+                perPage: 3,
+            }
+        },
+        arrowPath:"M25.6665 25L0.666504 50V0L25.6665 25Z",
+    } );
+    splide.mount();
+} );
