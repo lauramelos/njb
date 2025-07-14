@@ -2,44 +2,46 @@
 class NJB_Customizations {
     public function __construct() {
         // Initialization code here
-       add_filter( 'excerpt_more', array( $this, 'custom_excerpt_more' ) );
-       add_filter( 'excerpt_length', array( $this, 'custom_excerpt_length' ) );
-       add_action( 'woocommerce_init', array( __CLASS__, 'add_whatsapp_number' ) );
-    }
-
-    public function activate() {
-        // Code to run on plugin activation
-    }
-
-
-    public function deactivate() {
-        // Code to run on plugin deactivation
-    }
-
-    public function run() {
-        require_once plugin_dir_path( __FILE__ ) . 'post-types/donations.php';
-        // Code to run the plugin
-        add_action('init', array( $this, 'custom_functionality' ));
-       
-    }
+      }
 
     /**
-     * Custom functionality for the plugin.
+     * Run the plugin.
      */
-    public function custom_functionality() {
-        // Custom functionality for the plugin
-      
-    }
-    public function custom_excerpt_more( $more ) {
+    public function run() {
+        require_once plugin_dir_path( __FILE__ ) . 'post-types/donations.php';
+        require_once plugin_dir_path( __FILE__ ) . 'acf.php';
+        add_filter( 'excerpt_more', array( __CLASS__, 'custom_excerpt_more' ) );
+        add_filter( 'excerpt_length', array( __CLASS__, 'custom_excerpt_length' ) );
+        add_action( 'woocommerce_init', array( __CLASS__, 'add_whatsapp_number' ) );
+        add_action( 'acf/init', array( __CLASS__, 'set_acf_settings' ) );
+     }
+
+    /**
+     * Custom excerpt more text.
+     *
+     * @param string $more The default excerpt more text.
+     * @return string The custom excerpt more text.
+     */
+    public static function custom_excerpt_more( $more ) {
         return '...';
     }
    
-    public function custom_excerpt_length( $more ) {
+    /**
+     * Custom excerpt length.
+     *
+     * @param int $more The default excerpt length.
+     * @return int The custom excerpt length.
+     */
+    public static function custom_excerpt_length( $more ) {
         return 15;
     }
 
-
-    public static  function add_whatsapp_number () {
+    /**
+     * Add a WhatsApp number field to the WooCommerce checkout.
+     *
+     * @return void
+     */
+    public static function add_whatsapp_number () {
         woocommerce_register_additional_checkout_field(
             array(
                 'id'            => 'nbj/whatsapp_number',
@@ -56,5 +58,14 @@ class NJB_Customizations {
                 ),
             ),
         );
+    }
+
+    /**
+     * Set ACF settings to enable shortcodes.
+     *
+     * @return void
+     */
+    public static function set_acf_settings() {
+        acf_update_setting( 'enable_shortcode', true );
     }
 }
