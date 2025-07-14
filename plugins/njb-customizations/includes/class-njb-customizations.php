@@ -16,6 +16,9 @@ class NJB_Customizations {
         add_action( 'acf/init', array( __CLASS__, 'set_acf_settings' ) );
         add_filter( 'render_block_core/query', array( __CLASS__, 'query_carousel_block' ), 10, 2 );
         add_action( 'tribe_events_single_event_after_the_content', array( __CLASS__, 'event_add_external_link' ), 10, 2 );
+        add_action( 'wps_sfw_subscription_order', array( __CLASS__, 'add_custom_number_to_subscription'), 10, 2 );
+        add_filter( 'wps_sfw_column_subscription_table', array( __CLASS__, 'add_custom_number_to_subscription_table' ), 10);
+        add_filter( 'wps_sfw_add_case_column', array( __CLASS__, 'add_custom_number_value_to_subscription_table' ), 10, 3 );
     }
 
     /**
@@ -108,6 +111,7 @@ class NJB_Customizations {
         return $block_content;
     }
 
+
     /**
      * Add an external link to the event if the event has ended and an external link is set.
      *
@@ -132,5 +136,62 @@ class NJB_Customizations {
             </div>
         </div>
         <?php
+    }
+
+    /**
+     * Add a custom number to the subscription order.
+     *
+     * @param WC_Order $new_order The new order object.
+     * @param int      $order_id  The order ID.
+     */
+    public static function add_custom_number_to_subscription( $new_order, $order_id ) {
+        // Check if the order is a subscription order
+        if ( ! wps_sfw_order_has_subscription( $new_order ) ) {
+            error_log( 'Order ID ' . $order_id . ' is not a subscription order.' );
+            return;
+
+        }
+        
+        $subscription = wc_get_order( $new_order );
+        $subscription->add_meta_data( 'custom_number', 'NJB00000001' );  // Todo: Replace with actual logic to generate a custom number 
+        $subscription->add_order_note( 'Custom number added: NJB00000001' );
+        $subscription->save();
+        return;
+    }
+
+    /**
+     * Add a custom number column to the subscription table.
+     *
+     * @param array $columns The existing columns.
+     * @return array The modified columns.
+     */
+    public static function add_custom_number_to_subscription_table( $columns ) {
+        // Check if the order is a subscription order
+        return array_merge( $columns, array(
+            'custom_number' => __( 'Custom Number', 'njb-customizations' ),
+        ) );
+    }
+
+    /**
+     * Add the custom number value to the subscription table.
+     *
+     * @param string $return The current value.
+     * @param string $column_name The column name.
+     * @param array $item The item data.
+     * @return string The modified value.
+     */
+    public static function add_custom_number_value_to_subscription_table( $return, $column_name, $item ){
+        //error_log(print_r( $item, true ));
+        if ( 'custom_number' === $column_name ) {
+            $subscription = wc_get_order( $item['subscription_id'] );
+            $custom_number = $subscription->get_meta( 'custom_number');
+            
+            if ( ! empty( $custom_number ) ) {
+                $return =  esc_html( $custom_number );
+            } else {
+                $return =  __( 'No custom number', 'njb-customizations' );
+            }
+        }
+        return $return;
     }
 }
