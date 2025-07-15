@@ -55,22 +55,24 @@
         text-align: center;
     }
 }
-textarea,
-input {
-    background-color: var(--wp--preset--color--white);
-    border-radius: 6px;
-    color: var(--wp--preset--color--contrast);
-    border-width: 1px;
-    border-style: solid;
-    border-color: var(--wp--preset--color--coral);
-    padding: 14px 10px;
-    line-height: 100%;
-    box-shadow: none;
-    transition: border 0.15s, box-shadow 0.15s;
-    width: 100%;
-    box-sizing: border-box;
-    &[type=checkbox] {
-        padding: 0;
+.wpforms-form {
+    textarea,
+    input {
+        background-color: var(--wp--preset--color--white);
+        border-radius: 6px;
+        color: var(--wp--preset--color--contrast);
+        border-width: 1px;
+        border-style: solid;
+        border-color: var(--wp--preset--color--coral);
+        padding: 14px 10px;
+        line-height: 100%;
+        box-shadow: none;
+        transition: border 0.15s, box-shadow 0.15s;
+        width: 100%;
+        box-sizing: border-box;
+        &[type=checkbox] {
+            padding: 0;
+        }
     }
 }
 .center-aligned{
