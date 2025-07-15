@@ -17,11 +17,12 @@ class NJB_Customizations {
         add_action( 'acf/init', array( __CLASS__, 'set_acf_settings' ) );
         add_filter( 'render_block_core/query', array( __CLASS__, 'query_carousel_block' ), 10, 2 );
         add_action( 'tribe_events_single_event_after_the_content', array( __CLASS__, 'event_add_external_link' ), 10, 2 );
+        add_action( 'user_register',  array( __CLASS__, 'create_user_number') );
         add_action( 'wps_sfw_subscription_order', array( __CLASS__, 'add_custom_number_to_subscription'), 10, 2 );
         add_filter( 'wps_sfw_column_subscription_table', array( __CLASS__, 'add_custom_number_to_subscription_table' ), 10);
         add_filter( 'wps_sfw_add_case_column', array( __CLASS__, 'add_custom_number_value_to_subscription_table' ), 10, 3 );
-        add_action('template_redirect', array( __CLASS__, 'skip_cart_page_redirection_to_checkout' ) );
-        add_filter ('woocommerce_add_to_cart_redirect', array( __CLASS__, 'add_to_cart_redirection_to_checkout' ) ); 
+        add_action( 'template_redirect', array( __CLASS__, 'skip_cart_page_redirection_to_checkout' ) );
+        add_filter( 'woocommerce_add_to_cart_redirect', array( __CLASS__, 'add_to_cart_redirection_to_checkout' ) ); 
         add_filter( 'woocommerce_add_to_cart_validation', array( __CLASS__, 'remove_cart_item_before_add_to_cart' ), 5 );
     }
 
@@ -166,6 +167,23 @@ class NJB_Customizations {
     }
 
     /**
+     *  Create a user number when a new user is registered.
+     */
+    public static function create_user_number( $user_id ) {
+        // Check if the user ID is valid
+        if ( ! $user_id || ! is_numeric( $user_id ) ) {
+            return;
+        }
+
+        // Generate a custom number for the user
+        $custom_number = 'NJB' . str_pad( $user_id, 8, '0', STR_PAD_LEFT );
+
+        // Update the user meta with the custom number
+        update_user_meta( $user_id, 'custom_number', $custom_number );
+
+    }
+
+    /**
      * Add a custom number to the subscription order.
      *
      * @param WC_Order $new_order The new order object.
@@ -176,12 +194,27 @@ class NJB_Customizations {
         if ( ! wps_sfw_order_has_subscription( $new_order ) ) {
             error_log( 'Order ID ' . $order_id . ' is not a subscription order.' );
             return;
-
         }
-        
-        $subscription = wc_get_order( $new_order );
-        $subscription->add_meta_data( 'custom_number', 'NJB00000001' );  // Todo: Replace with actual logic to generate a custom number 
-        $subscription->add_order_note( 'Custom number added: NJB00000001' );
+        $wps_parent_order_id = wps_sfw_get_meta_data( $new_order, 'wps_parent_order', true );
+
+        $subscription = wc_get_order( $wps_parent_order_id );
+        // get user ID from the subscription
+        $user_id = $subscription->get_customer_id();
+        // Check if the user ID is valid
+        if ( ! $user_id || ! is_numeric( $user_id ) ) {
+            error_log( 'Invalid user ID for order ID ' . $order_id );
+            return;
+        }
+        // Generate a custom number for the user
+        $custom_number = get_user_meta( $user_id, 'custom_number', true );
+        if ( empty( $custom_number ) ) {
+            // If the custom number is not set, create it
+            self::create_user_number( $user_id );
+            $custom_number = get_user_meta( $user_id, 'custom_number', true );
+        }
+
+        $subscription->add_meta_data( 'custom_number', $custom_number );
+        $subscription->add_order_note( 'Custom number added: ' . $custom_number );
         $subscription->save();
         return;
     }
@@ -208,15 +241,26 @@ class NJB_Customizations {
      * @return string The modified value.
      */
     public static function add_custom_number_value_to_subscription_table( $return, $column_name, $item ){
-        //error_log(print_r( $item, true ));
         if ( 'custom_number' === $column_name ) {
-            $subscription = wc_get_order( $item['subscription_id'] );
+            $subscription = wc_get_order( $item['parent_order_id'] );
             $custom_number = $subscription->get_meta( 'custom_number');
             
             if ( ! empty( $custom_number ) ) {
                 $return =  esc_html( $custom_number );
             } else {
-                $return =  __( 'No custom number', 'njb-customizations' );
+                //create custom number
+                $user_id = $subscription->get_customer_id();
+                if ( ! $user_id || ! is_numeric( $user_id ) ) {
+                    error_log( 'Invalid user ID for subscription ID ' . $item['parent_order_id'] );
+                    return $return;
+                }
+                self::create_user_number( $user_id );
+                $custom_number = get_user_meta( $user_id, 'custom_number', true );
+                if ( ! empty( $custom_number ) ) {
+                    $return = esc_html( $custom_number );
+                } else {
+                    $return = __( 'No custom number found', 'njb-customizations' );
+                }
             }
         }
         return $return;
