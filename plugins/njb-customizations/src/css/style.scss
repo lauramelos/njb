@@ -69,6 +69,9 @@ input {
     transition: border 0.15s, box-shadow 0.15s;
     width: 100%;
     box-sizing: border-box;
+    &[type=checkbox] {
+        padding: 0;
+    }
 }
 .center-aligned{
     text-align: center;
@@ -255,5 +258,35 @@ strong {
     }
     &--next{
         right: 0!important;
+    }
+}
+
+.join-button form.cart{
+    grid-auto-flow: row;
+    grid-template-columns: auto;
+    margin: 6em 0;
+}
+
+.wc-block-components-address-form{
+    display: grid;
+    grid-template-columns: repeat( 4, 1fr);
+    grid-gap: 1em;
+    .wc-block-components-address-form__email,
+    .wc-block-components-address-form__njb-whatsapp_number {
+        grid-column: span 2;
+    }
+
+}
+
+.wc-block-components-additional-fields-list{
+    grid-template-columns: repeat( 8, auto)!important;
+    justify-content: start;
+    justify-items: start;
+    & > *{
+        border: none!important;
+    }
+
+    & > :nth-child(2) {
+        grid-column: span 7;
     }
 }
