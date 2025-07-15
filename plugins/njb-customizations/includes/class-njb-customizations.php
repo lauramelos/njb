@@ -22,7 +22,7 @@ class NJB_Customizations {
         add_filter( 'wps_sfw_add_case_column', array( __CLASS__, 'add_custom_number_value_to_subscription_table' ), 10, 3 );
         add_action('template_redirect', array( __CLASS__, 'skip_cart_page_redirection_to_checkout' ) );
         add_filter ('woocommerce_add_to_cart_redirect', array( __CLASS__, 'add_to_cart_redirection_to_checkout' ) ); 
-
+        add_filter( 'woocommerce_add_to_cart_validation', array( __CLASS__, 'remove_cart_item_before_add_to_cart' ), 5 );
     }
 
     /**
@@ -139,7 +139,6 @@ class NJB_Customizations {
         return $block_content;
     }
 
-
     /**
      * Add an external link to the event if the event has ended and an external link is set.
      *
@@ -242,6 +241,12 @@ class NJB_Customizations {
 
     public static function add_to_cart_redirection_to_checkout( ) {
         return wc_get_checkout_url();
+    }
+
+    public static function remove_cart_item_before_add_to_cart( $passed ) {
+        if( ! WC()->cart->is_empty() )
+           WC()->cart->empty_cart();
+        return $passed;
     }
 
 } 
