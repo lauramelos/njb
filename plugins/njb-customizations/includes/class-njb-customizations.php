@@ -1,5 +1,22 @@
 <?php
+
+use Automattic\WooCommerce\Blocks\Package;
+use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
+
 class NJB_Customizations {
+    static $group_options = array(
+        'njb/book-club' => 'Book Club',
+        'njb/business-start-up' => 'Business Start Up',
+        'njb/community-outreach'=> 'Community Outreach',
+        'njb/culinary-interests' => 'Culinary Interests',
+        'njb/fashion-lifestyle'=>'Fashion & Lifestyle',
+        'njb/fitness-exercise' => 'Fitness & Exercise',
+        'njb/travels-art-culture' => 'Travels, Art & Culture',
+        'njb/young-adults' => 'Young Adults',
+    );
+    /**
+     * Constructor for the NJB_Customizations class.
+     */
     public function __construct() {
         // Initialization code here
       }
@@ -24,6 +41,10 @@ class NJB_Customizations {
         add_action( 'template_redirect', array( __CLASS__, 'skip_cart_page_redirection_to_checkout' ) );
         add_filter( 'woocommerce_add_to_cart_redirect', array( __CLASS__, 'add_to_cart_redirection_to_checkout' ) ); 
         add_filter( 'woocommerce_add_to_cart_validation', array( __CLASS__, 'remove_cart_item_before_add_to_cart' ), 5 );
+        $emails = WC_Emails::instance();
+        remove_action( 'woocommerce_email_customer_details', array( $emails, 'additional_checkout_fields' ), 30, 3 );
+        add_action( 'woocommerce_email_customer_details', array( __CLASS__, 'additional_checkout_fields' ), 30, 3 );
+
     }
 
     /**
@@ -71,20 +92,10 @@ class NJB_Customizations {
     }
 
     public static function add_group_options () {
-        $checkboxes = array(
-            'book-club' => 'Book Club',
-            'business-start-up' => 'Business Start Up',
-            'community-outreach'=> 'Community Outreach',
-            'culinary-interests' => 'Culinary Interests',
-            'fashion-lifestyle'=>'Fashion & Lifestyle',
-            'fitness-exercise' => 'Fitness & Exercise',
-            'travels-art-culture' => 'Travels, Art & Culture',
-            'young-adults' => 'Young Adults',
-        );
-        foreach ( $checkboxes as $key => $value ) {
+        foreach ( self::$group_options as $key => $value ) {
             woocommerce_register_additional_checkout_field(
                 array(
-                    'id'       => 'njb/' . $key,
+                    'id'       => $key,
                     'label'    => $value,
                     'optionalLabel' => $value,
                     'location' => 'contact',
@@ -256,6 +267,11 @@ class NJB_Customizations {
                 }
                 self::create_user_number( $user_id );
                 $custom_number = get_user_meta( $user_id, 'custom_number', true );
+
+                $subscription->add_meta_data( 'custom_number', $custom_number );
+                $subscription->add_order_note( 'Custom number added: ' . $custom_number );
+                $subscription->save();
+
                 if ( ! empty( $custom_number ) ) {
                     $return = esc_html( $custom_number );
                 } else {
@@ -291,6 +307,45 @@ class NJB_Customizations {
         if( ! WC()->cart->is_empty() )
            WC()->cart->empty_cart();
         return $passed;
+    }
+
+    /**
+     * Add additional checkout fields to the WooCommerce emails.
+     *
+     * @param WC_Order $order The order object.
+     * @param bool $sent_to_admin Whether the email is sent to the admin.
+     * @param bool $plain_text Whether the email is plain text.
+     */
+    public static function additional_checkout_fields( $order, $sent_to_admin, $plain_text ) {
+        // Get the WhatsApp number from the order meta 
+        $checkout_fields = Package::container()->get( CheckoutFields::class );
+        $all_fields = $checkout_fields->get_all_fields_from_object( $order, 'other' );
+
+        $whatsapp_number =  $all_fields[ 'njb/whatsapp_number' ];
+        if ( ! empty( $whatsapp_number ) ) {
+            echo '<p><strong>' . __( 'WhatsApp Number:', 'njb-customizations' ) . '</strong> ' . esc_html( $whatsapp_number ) . '</p>';
+        }
+
+        // Get the custom number from the order meta
+        $custom_number = $order->get_meta( 'custom_number' );
+        if ( ! empty( $custom_number ) ) {
+            echo '<p><strong>' . __( 'Custom Number:', 'njb-customizations' ) . '</strong> ' . esc_html( $custom_number ) . '<br />';
+            echo '<strong>' . __( 'Note: ', 'njb-customizations') . '</strong>' . __( 'This NJB ID will be required for registration at future NJB events.', 'njb-customizations' ) . '</p>';
+        }
+
+        // Get the group options from the order meta
+        ?>
+        <p><strong><?php esc_html_e( 'Selected Groups: ', 'njb-customizations' ); ?></strong> 
+        <?php
+        foreach ( self::$group_options as $key => $label ) {
+            $group_value = $all_fields[ $key ];
+            if ( ! empty( $group_value ) ) {
+                echo esc_html( $label ) . ', ';
+            }
+        }
+        ?>
+        </p>
+        <?php
     }
 
 } 
