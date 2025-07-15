@@ -13,12 +13,16 @@ class NJB_Customizations {
         add_filter( 'excerpt_more', array( __CLASS__, 'custom_excerpt_more' ) );
         add_filter( 'excerpt_length', array( __CLASS__, 'custom_excerpt_length' ) );
         add_action( 'woocommerce_init', array( __CLASS__, 'add_whatsapp_number' ) );
+        add_action( 'woocommerce_init', array( __CLASS__, 'add_group_options' ) );
         add_action( 'acf/init', array( __CLASS__, 'set_acf_settings' ) );
         add_filter( 'render_block_core/query', array( __CLASS__, 'query_carousel_block' ), 10, 2 );
         add_action( 'tribe_events_single_event_after_the_content', array( __CLASS__, 'event_add_external_link' ), 10, 2 );
         add_action( 'wps_sfw_subscription_order', array( __CLASS__, 'add_custom_number_to_subscription'), 10, 2 );
         add_filter( 'wps_sfw_column_subscription_table', array( __CLASS__, 'add_custom_number_to_subscription_table' ), 10);
         add_filter( 'wps_sfw_add_case_column', array( __CLASS__, 'add_custom_number_value_to_subscription_table' ), 10, 3 );
+        add_action('template_redirect', array( __CLASS__, 'skip_cart_page_redirection_to_checkout' ) );
+        add_filter ('woocommerce_add_to_cart_redirect', array( __CLASS__, 'add_to_cart_redirection_to_checkout' ) ); 
+
     }
 
     /**
@@ -49,7 +53,7 @@ class NJB_Customizations {
     public static function add_whatsapp_number () {
         woocommerce_register_additional_checkout_field(
             array(
-                'id'            => 'nbj/whatsapp_number',
+                'id'            => 'njb/whatsapp_number',
                 'type'          => 'text',
                 'label'         => 'WhatsApp Number',
                 'location'      => 'contact',
@@ -63,6 +67,30 @@ class NJB_Customizations {
                 ),
             ),
         );
+    }
+
+    public static function add_group_options () {
+        $checkboxes = array(
+            'book-club' => 'Book Club',
+            'business-start-up' => 'Business Start Up',
+            'community-outreach'=> 'Community Outreach',
+            'culinary-interests' => 'Culinary Interests',
+            'fashion-lifestyle'=>'Fashion & Lifestyle',
+            'fitness-exercise' => 'Fitness & Exercise',
+            'travels-art-culture' => 'Travels, Art & Culture',
+            'young-adults' => 'Young Adults',
+        );
+        foreach ( $checkboxes as $key => $value ) {
+            woocommerce_register_additional_checkout_field(
+                array(
+                    'id'       => 'njb/' . $key,
+                    'label'    => $value,
+                    'optionalLabel' => $value,
+                    'location' => 'contact',
+                    'type'     => 'checkbox',
+                )
+            );
+        }
     }
 
     /**
@@ -194,4 +222,27 @@ class NJB_Customizations {
         }
         return $return;
     }
-}
+
+    /**
+     * Redirect the cart page to the checkout page.
+     *
+     * @return void
+     */
+    public static  function skip_cart_page_redirection_to_checkout() {
+        // Check if WooCommerce is active
+        if ( ! class_exists( 'WooCommerce' ) ) {
+            return;
+        }
+
+        if( is_cart() ) {
+            wp_redirect( wc_get_checkout_url() );
+        }
+    }
+
+
+    public static function add_to_cart_redirection_to_checkout( ) {
+        return wc_get_checkout_url();
+    }
+
+} 
+ 
