@@ -27,6 +27,10 @@ document.addEventListener("DOMContentLoaded", function () {
 import Splide from '@splidejs/splide';
 
 document.addEventListener( 'DOMContentLoaded', function() {
+    if( ! document.querySelector( '.is-style-carousel' ) ) {
+        return;
+    }
+    // Initialize Splide carousel
     var splide = new Splide( '.is-style-carousel', {
         type: 'loop',
         perPage: 3,
