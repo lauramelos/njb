@@ -21,7 +21,7 @@ if ( ! defined( 'NJB_PLUGIN_FILE' ) ) {
 }
 
 // Define constants.
-const VERSION     = '0.1.36';
+const VERSION     = '0.1.40';
 const PLUGIN_FILE = __FILE__;
 
 
