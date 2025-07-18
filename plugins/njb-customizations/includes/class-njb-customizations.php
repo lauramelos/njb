@@ -45,6 +45,7 @@ class NJB_Customizations {
         $emails = WC_Emails::instance();
         remove_action( 'woocommerce_email_customer_details', array( $emails, 'additional_checkout_fields' ), 30, 3 );
         add_action( 'woocommerce_email_customer_details', array( __CLASS__, 'additional_checkout_fields' ), 30, 3 );
+        add_filter( 'wc_stripe_force_save_source', array( __CLASS__, 'wps_sfw_wc_stripe_force_save_source_callback_old' ), 20 );
 
     }
 
@@ -352,5 +353,16 @@ class NJB_Customizations {
         <?php
     }
 
+    /**
+     * Force stripe to Save payment information to my account for future purchases.
+     *
+     * @param bool $force_save_source Should we force save payment source.
+     */
+    public static function wps_sfw_wc_stripe_force_save_source_callback_old( $force_save_source ) {
+        if ( wps_sfw_is_cart_has_subscription_product() ) {
+            return false;
+        }
+        return $force_save_source;
+    }
 } 
  
