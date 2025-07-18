@@ -5,15 +5,16 @@ use Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields;
 
 class NJB_Customizations {
     static $group_options = array(
-        'njb/book-club' => 'Book Club',
-        'njb/business-start-up' => 'Business Start Up',
-        'njb/community-outreach'=> 'Community Outreach',
-        'njb/culinary-interests' => 'Culinary Interests',
-        'njb/fashion-lifestyle'=>'Fashion & Lifestyle',
-        'njb/fitness-exercise' => 'Fitness & Exercise',
-        'njb/travels-art-culture' => 'Travels, Art & Culture',
-        'njb/young-adults' => 'Young Adults',
+        'njb/book-club'           => array( 'label' => 'Book Club',             'whatsapp' => 'LTr2ryN0Lf2BN5ARpA99qf' ),
+        'njb/business-start-up'   => array( 'label' => 'Business Start Up',     'whatsapp' => 'EVK3OxGl9BMK2Wb5zyGMAi' ),
+        'njb/community-outreach'  => array( 'label' =>'Community Outreach',     'whatsapp' => 'Fc793VxTBehLNwvjkfqFsq' ),
+        'njb/culinary-interests'  => array( 'label' =>'Culinary Interests',     'whatsapp' => 'Gaf9QlV6nZ3Is4BqcrXR7h' ),
+        'njb/fashion-lifestyle'   => array( 'label' =>'Fashion & Lifestyle',    'whatsapp' => 'LofawNEG3SVE8HvHqGvc9S' ),
+        'njb/fitness-exercise'    => array( 'label' =>'Fitness & Exercise',     'whatsapp' => 'IWtXszLXxY42Yk7r5Wu7Go' ),
+        'njb/travels-art-culture' => array( 'label' =>'Travels, Art & Culture', 'whatsapp' => 'JmP1LklPDlG0iQHJhHjyI4' ),
+        'njb/young-adults'        => array( 'label' =>'Young Adults',           'whatsapp' => 'B4mmTfM8eigLmEYnccWf6E' ),
     );
+
     /**
      * Constructor for the NJB_Customizations class.
      */
@@ -96,8 +97,8 @@ class NJB_Customizations {
             woocommerce_register_additional_checkout_field(
                 array(
                     'id'       => $key,
-                    'label'    => $value,
-                    'optionalLabel' => $value,
+                    'label'    => $value['label'],
+                    'optionalLabel' => $value['label'],
                     'location' => 'contact',
                     'type'     => 'checkbox',
                 )
@@ -206,9 +207,12 @@ class NJB_Customizations {
             error_log( 'Order ID ' . $order_id . ' is not a subscription order.' );
             return;
         }
-        $wps_parent_order_id = wps_sfw_get_meta_data( $new_order, 'wps_parent_order', true );
 
-        $subscription = wc_get_order( $wps_parent_order_id );
+        $subscription = wc_get_order( $order_id );
+        if( ! $subscription || ! is_a( $subscription , 'WC_Order') ) {
+            error_log( 'Subscription not found for order ID ' . $order_id );
+            return;
+        }
         // get user ID from the subscription
         $user_id = $subscription->get_customer_id();
         // Check if the user ID is valid
@@ -298,7 +302,6 @@ class NJB_Customizations {
         }
     }
 
-
     public static function add_to_cart_redirection_to_checkout( ) {
         return wc_get_checkout_url();
     }
@@ -335,15 +338,16 @@ class NJB_Customizations {
 
         // Get the group options from the order meta
         ?>
-        <p><strong><?php esc_html_e( 'Selected Groups: ', 'njb-customizations' ); ?></strong> 
-        <?php
-        foreach ( self::$group_options as $key => $label ) {
-            $group_value = $all_fields[ $key ];
-            if ( ! empty( $group_value ) ) {
-                echo esc_html( $label ) . ', ';
-            }
-        }
-        ?>
+        <p>
+            <strong><?php esc_html_e( 'Selected Groups: ', 'njb-customizations' ); ?></strong> 
+            <?php
+                foreach ( self::$group_options as $key => $value ) {
+                    $group_value = $all_fields[ $key ];
+                    if ( ! empty( $group_value ) ) {
+                        echo esc_html( $value['label'] ) . ': <a href="https://chat.whatsapp.com/' . esc_html( $value['whatsapp'] ) . '" target="_blank">Join Whatsapp Group</a><br />';
+                    }
+                }
+            ?>
         </p>
         <?php
     }
