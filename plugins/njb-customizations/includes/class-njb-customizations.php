@@ -79,13 +79,13 @@ class NJB_Customizations {
             array(
                 'id'            => 'njb/whatsapp_number',
                 'type'          => 'text',
-                'label'         => 'WhatsApp Number',
+                'label'         => 'Phone Number (Optional WhatsApp)',
                 'location'      => 'contact',
                 'required'      => true,
                 'attributes'    => array(
                     'autocomplete'     => 'whatsapp_number',
-                    'aria-describedby' => 'WhatsApp Number',
-                    'aria-label'       => 'WhatsApp Number label',
+                    'aria-describedby' => 'Phone Number (Optional WhatsApp) ',
+                    'aria-label'       => 'Phone Number label',
                     'pattern' => '\+?[0-9\s\-\(\)]{7,15}', // A phone number pattern allowing 7 to 15 digits with optional +, spaces, dashes, and parentheses.					'title'            => 'Title to show on hover',
                     'data-custom'      => 'custom data',
                 ),
