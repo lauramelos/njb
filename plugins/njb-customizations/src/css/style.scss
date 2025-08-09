@@ -39,11 +39,18 @@
     .groups-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: var(--wp--preset--spacing--30);
+        h6{
+            min-height: 30px;
+        }
     }
+    .event-loop-grid {
+        grid-template-rows: auto!important;
+    }
+
 }
 
 .event-loop-grid {
-    grid-template-rows: 30px 1px auto auto 100px
+    grid-template-rows: 30px 1px 90px 80px 100px;
 }
 
 @media (min-width: 641px) and (max-width: 1024px) {
@@ -298,4 +305,13 @@ strong {
     & > :nth-child(2) {
         grid-column: span 7;
     }
+}
+.groups-section {
+    h6 {
+        height: 30px;
+    }
+}
+.tribe-events-event-image img {
+    width: 100%;
+    height: auto;
 }
