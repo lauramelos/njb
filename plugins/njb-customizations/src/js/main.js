@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
             checkbox.addEventListener('change', function() {
                 const checked = document.querySelectorAll('#contact input[type="checkbox"]:checked');
                 if ( checked.length > 3 ) {
-                    this.click();
+                    checkbox.click();
                     message.textContent = 'You can only select up to 3 options. Please uncheck one of the selected options to select a new one.';
                 } else {
                     message.textContent = '';

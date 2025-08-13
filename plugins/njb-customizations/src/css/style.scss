@@ -308,10 +308,22 @@ strong {
 }
 .groups-section {
     h6 {
-        height: 30px;
+        //height: 30px;
     }
 }
 .tribe-events-event-image img {
     width: 100%;
     height: auto;
+}
+
+.single_add_to_cart_button {
+    min-width: 165px;
+}
+
+//editor styles
+.block-editor-block-list__layout {
+    &.wp-block-create-block-modal {
+        max-height: 50px;
+        overflow: hidden;
+    }
 }
