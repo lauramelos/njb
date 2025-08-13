@@ -39,9 +39,8 @@ class NJB_Customizations {
         add_action( 'wps_sfw_subscription_order', array( __CLASS__, 'add_custom_number_to_subscription'), 10, 2 );
         add_filter( 'wps_sfw_column_subscription_table', array( __CLASS__, 'add_custom_number_to_subscription_table' ), 10);
         add_filter( 'wps_sfw_add_case_column', array( __CLASS__, 'add_custom_number_value_to_subscription_table' ), 10, 3 );
-        add_action( 'template_redirect', array( __CLASS__, 'skip_cart_page_redirection_to_checkout' ) );
-        add_filter( 'woocommerce_add_to_cart_redirect', array( __CLASS__, 'add_to_cart_redirection_to_checkout' ) ); 
-        add_filter( 'woocommerce_add_to_cart_validation', array( __CLASS__, 'remove_cart_item_before_add_to_cart' ), 5 );
+        add_filter( 'woocommerce_add_to_cart_handler', array( __CLASS__, 'add_to_cart_subscription_handler' ), 10, 2 );
+        add_action( 'woocommerce_add_to_cart_handler_wps_swf_subscription_handler', array( __CLASS__, 'redirect_subscription_to_checkout') );
         $emails = WC_Emails::instance();
         remove_action( 'woocommerce_email_customer_details', array( $emails, 'additional_checkout_fields' ), 30, 3 );
         add_action( 'woocommerce_email_customer_details', array( __CLASS__, 'additional_checkout_fields' ), 30, 3 );
@@ -287,31 +286,39 @@ class NJB_Customizations {
         return $return;
     }
 
-    /**
-     * Redirect the cart page to the checkout page.
-     *
-     * @return void
-     */
-    public static  function skip_cart_page_redirection_to_checkout() {
-        // Check if WooCommerce is active
-        if ( ! class_exists( 'WooCommerce' ) ) {
-            return;
+    public static function add_to_cart_subscription_handler ( $handler, $product_id ) {
+        // Check if the product is a subscription product
+        if ( wps_sfw_check_product_is_subscription( $product_id ) ) {
+            // Redirect to checkout page
+            return 'wps_swf_subscription_handler';
         }
-
-        if( is_cart() ) {
-            wp_redirect( wc_get_checkout_url() );
-        }
+        return $handler;
     }
 
-    public static function add_to_cart_redirection_to_checkout( ) {
-        return wc_get_checkout_url();
+    public static function redirect_subscription_to_checkout( $url ) {
+        $product_id        = apply_filters( 'woocommerce_add_to_cart_product_id', absint( wp_unslash( $_REQUEST['add-to-cart'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$was_added_to_cart = false;
+		$adding_to_cart    = wc_get_product( $product_id );
+
+		if ( ! $adding_to_cart ) {
+			return;
+		}
+
+        $quantity          = empty( $_REQUEST['quantity'] ) ? 1 : wc_stock_amount( wp_unslash( $_REQUEST['quantity'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$passed_validation = apply_filters( 'woocommerce_add_to_cart_validation', true, $product_id, $quantity );
+
+		if ( $passed_validation && false !== WC()->cart->add_to_cart( $product_id, $quantity ) ) {
+			wc_add_to_cart_message( array( $product_id => $quantity ), true );
+			$was_added_to_cart =  true;
+		}
+
+        // If we added the product to the cart we can now optionally do a redirect.
+        $url = apply_filters( 'woocommerce_add_to_cart_redirect', $url, $adding_to_cart );
+        wp_safe_redirect( wc_get_checkout_url() );
+        exit;
+			
     }
 
-    public static function remove_cart_item_before_add_to_cart( $passed ) {
-        if( ! WC()->cart->is_empty() )
-           WC()->cart->empty_cart();
-        return $passed;
-    }
 
     /**
      * Add additional checkout fields to the WooCommerce emails.
@@ -336,11 +343,13 @@ class NJB_Customizations {
             echo '<p><strong>' . __( 'Custom Number:', 'njb-customizations' ) . '</strong> ' . esc_html( $custom_number ) . '<br />';
             echo '<strong>' . __( 'Note: ', 'njb-customizations') . '</strong>' . __( 'This NJB ID will be required for registration at future NJB events.', 'njb-customizations' ) . '</p>';
         }
-
-        // Get the group options from the order meta
         ?>
+         <p>
+            <strong><?php esc_html_e( 'Main NJB Group: ', 'njb-customizations' ); ?></strong> 
+            <a href="https://chat.whatsapp.com/Gb5oNEguy8N1zRXIStjbh0" target="_blank">Join Main Whatsapp Group</a>
+        </p> 
         <p>
-            <strong><?php esc_html_e( 'Selected Groups: ', 'njb-customizations' ); ?></strong> 
+            <strong><?php esc_html_e( 'Selected Aditional Groups: ', 'njb-customizations' ); ?></strong><br />
             <?php
                 foreach ( self::$group_options as $key => $value ) {
                     $group_value = $all_fields[ $key ];
