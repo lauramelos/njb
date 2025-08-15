@@ -327,3 +327,42 @@ strong {
         overflow: hidden;
     }
 }
+
+.woocommerce-edit-account{
+    .njb-group-option {
+        display: none;
+    }
+}
+
+.acf-input-wrap {
+    overflow:visible!important;
+}
+.acf-field-hidden,
+.hidden {
+    display: none!important;
+}
+
+
+.acf-field .acf-input {
+    input[type=password],
+    input[type=text],
+    input[type=date],
+    input[type=datetime],
+    input[type=datetime-local],
+    input[type=email],
+    input[type=url],
+    select,
+    textarea,
+    input[type=search],
+    input[type=tel],
+    .select2-container .select2-selection--single .select2-selection__rendered{
+        font-size: var(--wp--preset--font-size--small);
+        padding: .9rem 1.1rem;
+    }
+    i.acf-icon {
+        top:16px;
+    }
+}
+.acf-form-submit{
+    padding: 16px;
+}

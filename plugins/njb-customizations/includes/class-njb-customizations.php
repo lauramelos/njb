@@ -27,6 +27,8 @@ class NJB_Customizations {
      */
     public function run() {
         require_once plugin_dir_path( __FILE__ ) . 'post-types/donations.php';
+        require_once plugin_dir_path( __FILE__ ) . 'class-business.php';
+
         require_once plugin_dir_path( __FILE__ ) . 'acf.php';
         add_filter( 'excerpt_more', array( __CLASS__, 'custom_excerpt_more' ) );
         add_filter( 'excerpt_length', array( __CLASS__, 'custom_excerpt_length' ) );
@@ -73,7 +75,7 @@ class NJB_Customizations {
      *
      * @return void
      */
-    public static function add_whatsapp_number () {
+    public static function add_whatsapp_number() {
         woocommerce_register_additional_checkout_field(
             array(
                 'id'            => 'njb/whatsapp_number',
@@ -92,7 +94,7 @@ class NJB_Customizations {
         );
     }
 
-    public static function add_group_options () {
+    public static function add_group_options() {
         foreach ( self::$group_options as $key => $value ) {
             woocommerce_register_additional_checkout_field(
                 array(
@@ -101,6 +103,7 @@ class NJB_Customizations {
                     'optionalLabel' => $value['label'],
                     'location' => 'contact',
                     'type'     => 'checkbox',
+                    'class'    => 'njb-group-option',
                 )
             );
         }
