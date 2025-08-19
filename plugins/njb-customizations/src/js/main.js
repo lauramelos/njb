@@ -228,7 +228,7 @@ jQuery( function( $ ) {
 
 				$.each( state, function( index ) {
 					var $option = $( '<option></option>' )
-						.prop( 'value', index )
+						.prop( 'value', state[ index ] )
 						.text( state[ index ] );
 					$statebox.append( $option );
 				} );
