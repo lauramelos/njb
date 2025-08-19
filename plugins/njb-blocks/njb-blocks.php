@@ -57,3 +57,89 @@ function create_block_njb_blocks_block_init() {
 	}
 }
 add_action( 'init', 'create_block_njb_blocks_block_init' );
+
+add_action('rest_api_init', function () {
+    register_rest_route('njb/v1', '/listing', [
+        'methods' => 'GET',
+        'callback' => 'njb_listing_api',
+    ]);
+});
+
+function njb_listing_api(WP_REST_Request $request) {
+	$search = $request['s'] ?? '';
+    $args = [
+        'post_type' => 'business',
+        'posts_per_page' => 10,
+        's' => $search,
+    ];
+    if ( ! empty( $request['business_location_country'] ) ) {
+        $args['tax_query'][] = [[
+            'taxonomy' => 'business_location_country',
+            'field' => 'name',
+            'terms' => sanitize_text_field( $request['business_location_country']),
+        ]];
+    }
+	if ( ! empty( $request['business_location_state'] ) ) {
+        $args['tax_query'][] = [[
+            'taxonomy' => 'business_location_state',
+            'field' => 'name',
+            'terms' => sanitize_text_field( $request['business_location_state']),
+        ]];
+    }
+	if ( ! empty( $request['business_sector'] ) ) {
+        $args['tax_query'][] = [[
+            'taxonomy' => 'business_sector',
+            'field' => 'name',
+            'terms' => sanitize_text_field( $request['business_sector']),
+        ]];
+    }
+
+	  // Extiende la búsqueda a taxonomías si hay término de búsqueda
+    if ( $search ) {
+        add_filter('posts_search', function($search_sql, $wp_query) use ($search) {
+            global $wpdb;
+            if ( ! $search ) return $search_sql;
+
+            // Taxonomías a buscar
+            $taxonomies = ['business_sector', 'business_location_country', 'business_location_state'];
+            $terms_sql = [];
+            foreach ( $taxonomies as $tax ) {
+                $terms_sql[] = $wpdb->prepare(
+                    "ID IN (
+                        SELECT object_id FROM {$wpdb->term_relationships}
+                        WHERE term_taxonomy_id IN (
+                            SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy}
+                            WHERE taxonomy = %s AND term_id IN (
+                                SELECT term_id FROM {$wpdb->terms}
+                                WHERE name LIKE %s
+                            )
+                        )
+                    )",
+                    $tax, '%' . $wpdb->esc_like($search) . '%'
+                );
+            }
+            // Une la búsqueda original con la de taxonomías
+            $search_sql .= ' OR (' . implode(' OR ', $terms_sql) . ')';
+            return $search_sql;
+        }, 10, 2);
+    }
+
+    $query = new WP_Query($args);
+    $posts = [];
+    while ( $query->have_posts() ) {
+        $query->the_post();
+		if ( ! get_field('approved') ) continue;
+        $posts[] = [
+            'title' => get_the_title(),
+            'link'  => get_permalink(),
+            'logo'  => wp_get_attachment_image( get_field('small_business_logoicon'), 'medium' ),
+			'sectors' => get_the_terms( get_the_ID(), 'business_sector' ),
+			'country' => get_the_terms( get_the_ID(), 'business_location_country' ),
+			'state'   => get_the_terms( get_the_ID(), 'business_location_state' ),
+			'excerpt' => get_the_excerpt(),
+			'content' => apply_filters('the_content', get_the_content()),
+        ];
+    }
+    wp_reset_postdata();
+    return $posts;
+}

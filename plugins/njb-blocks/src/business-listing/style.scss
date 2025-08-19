@@ -1,0 +1,63 @@
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+.wp-block-create-block-business-listing {
+	
+	.business-filters {
+		margin-bottom: 3em;
+		.select2-container {
+			margin-right: 30px;
+			.select2-selection--single {
+				margin: 0!important;
+				.select2-selection__rendered{
+					padding: 10px 1.1rem;
+					line-height: 20px;
+				}
+			}
+		}
+		input, select {
+			font-size: var(--wp--preset--font-size--small);
+    		padding: 10px 1.1rem;
+   			margin: 0 2em  0 0;
+			box-sizing: border-box;
+			font-size: 14px;
+			line-height: 20px;
+			background-color: var(--wc-form-color-background, #fff);
+			border: var(--wc-form-border-width, 1px) solid var(--wc-form-border-color, #aaa);
+			border-radius: var(--wc-form-border-radius, 4px);
+			vertical-align: middle;
+		}
+			
+	}
+	.business-listing {
+		display: grid;
+  		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 1em;
+		width: 100%;
+  		box-sizing: border-box;
+		
+		.business-logo {
+			overflow: hidden;
+			margin: -14px -14px 0 -14px;
+			img {
+				width: 100%;
+				height: auto;
+			}
+		}
+		&-item {
+			display: grid;
+			grid-template-columns: 1fr;
+			grid-template-rows: 250px auto auto;
+			gap: 1em;
+			padding: 1em;
+			background-color: var(--wp--preset--color--base);
+			h5, p {
+				margin: 0;
+			}
+		}
+	}
+}
