@@ -28,9 +28,12 @@ class NJB_business {
         add_filter( 'query_vars', array( __CLASS__ , 'custom_query_vars' ), 0 );
         add_filter( 'woocommerce_account_menu_items', array( __CLASS__, 'my_account_menu_items' ) );
         add_action( 'woocommerce_account_business_endpoint', array( __CLASS__, 'endpoint_content' ) );
-        add_filter( 'acf/prepare_field/name=user_id', array( __CLASS__, 'set_user_id' ));
         add_filter( 'acf/prepare_field/name=approved', array( __CLASS__, 'hide_approved' ) );
         add_action( 'wps_sfw_order_status_changed', array( __CLASS__, 'clear_transients' ) );
+        add_action( 'acf/save_post', array( __CLASS__ , 'save_taxonomies' ), 20);
+
+        add_filter( 'acf/update_value/name=business_name', array( __CLASS__ , 'update_title' ), 10, 4 );
+
     }
 
 
@@ -112,22 +115,6 @@ class NJB_business {
     }
 
     /**
-     * Sets the user ID field to the current user's ID.
-     *
-     * @param array $field The ACF field array.
-     * @return array Modified field array.
-     */
-    static public function set_user_id( $field ) {
-        if ( is_admin() ) {
-            return $field; // Only modify on the frontend
-        }
-        $field['class'] = 'hidden';
-        $field['type'] = 'hidden';
-        $field['default_value'] = get_current_user_id();
-        return $field;
-    }
-
-    /**
      * Hides the 'approved' field on the frontend.
      */
     static public function hide_approved( $field ) {
@@ -156,12 +143,11 @@ class NJB_business {
             return $posts[0];
         }
 
-
         $new_post_id = wp_insert_post( array(
             'post_type'   => 'business',
             'post_status' => 'draft',
             'post_author' => $user_id,
-            'post_title'  => 'Datos de usuario ' . $user_id
+            'post_title'  => 'Draft business for ' . $user_id
         ));
 
         return $new_post_id;
@@ -227,6 +213,72 @@ class NJB_business {
         if ( $user_id ) {
             delete_transient( 'wps_sfw_active_subscription_' . $user_id );
         }
+    }
+
+    /**
+     * Save taxonomies when the Business post is saved.
+     *
+     * @param int $post_id The post ID.
+     */
+    public static function save_taxonomies( $post_id ) {
+        // Check if the post type is 'business'
+        if ( get_post_type( $post_id ) !== 'business' ) {
+            return;
+        }
+
+        if ( empty($_POST['acf']) ) {
+            return;
+        }
+
+        $all_countries = WC()->countries->get_allowed_countries();
+        // Define the ACF field keys for the taxonomies
+        $term_array = array(
+            'business_location_country' => isset( $_POST['acf']['field_689dc076d6518']['field_689e068b52813'] ) ? $all_countries[ sanitize_text_field( $_POST['acf']['field_689dc076d6518']['field_689e068b52813'] ) ] : '',
+            'business_location_state'   => isset( $_POST['acf']['field_689dc076d6518']['field_689e069352814'] ) ? sanitize_text_field( $_POST['acf']['field_689dc076d6518']['field_689e069352814'] ) : '',
+            'business_sector'           => isset( $_POST['acf']['field_689dc057d6517'] ) ? sanitize_text_field( $_POST['acf']['field_689dc057d6517']) : '',
+        );
+        foreach ( $term_array as $taxonomy => $term_name ) {
+            if ( ! empty( $term_name ) ) {
+                // Get the term ID from the submitted value
+                $term_id = self::get_term_id_by_name( $term_name, $taxonomy );
+                if ( is_wp_error( $term_id ) || ! $term_id ) {
+                    continue; // Skip if there was an error or term ID is not valid
+                }
+                // Set the term for the post
+                wp_set_object_terms( (int) $post_id, (int) $term_id, $taxonomy, false );
+            }
+        }
+    }
+
+    /**
+     * Get object term ID by name, or create it if it doesn't exist.
+     */
+    public static function get_term_id_by_name( $name, $taxonomy ) {
+        $term = get_term_by( 'name', $name, $taxonomy );
+        if ( ! $term ) {
+            // If the term doesn't exist, create it
+            $term = wp_insert_term( $name, $taxonomy );
+            if ( is_wp_error( $term ) ) {
+                return 0; // Return 0 if there was an error creating the term
+            }
+            return $term['term_id']; // Return the newly created term ID
+        }
+        return $term->term_id; // Return the term ID
+    }
+
+     /**
+     * Get object term ID by name, or create it if it doesn't exist.
+     */
+    public static function update_title( $value, $post_id, $field, $original ) {
+        if ( is_string( $value ) ) {
+            // change post title to the value of the ACF field
+            $post = get_post( $post_id );
+            if ( $post && $post->post_type === 'business' && $post->post_title !== $value ) {
+                $post->post_title = $value;
+                wp_update_post( $post );
+            }
+        }
+        return $value;
     }
 }
 
