@@ -57,9 +57,11 @@ document.addEventListener("DOMContentLoaded", function () {
             restrictSelectors();
             observer.disconnect(); // Stop observing once the checkboxes are found
         }
+        attachBirthInputListener(); // Ensure the birth input listener is attached
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
+
     function restrictSelectors() {
 
         const whatapp = document.querySelectorAll('.wc-block-components-address-form__njb-whatsapp_number');
@@ -92,24 +94,83 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!message) {
             message = document.createElement('div');
             message.id = 'checkbox-limit-message';
-            message.style.color = 'red';
+            message.style.color = '#cc1818';
             message.style.marginBottom = '10px';
             message.style.gridColumn = '1 / span 4';
             const form = document.querySelector('#contact');
             if (form) form.append(message);
         }
-
+		const submitButton = document.querySelector('.wc-block-components-checkout-place-order-button');
         checkboxes.forEach(function(checkbox) {
             checkbox.addEventListener('change', function() {
                 const checked = document.querySelectorAll('#contact input[type="checkbox"]:checked');
                 if ( checked.length > 3 ) {
                     checkbox.click();
                     message.textContent = 'You can only select up to 3 options. Please uncheck one of the selected options to select a new one.';
+					submitButton.disabled = true;
                 } else {
                     message.textContent = '';
+					submitButton.disabled = false;
                 }
             });
         });
+    }
+
+    function attachBirthInputListener() {
+        var birthInput = document.getElementById('contact-njb-birth_date');
+        if ( birthInput && !birthInput.dataset.listenerAttached ) {
+            birthInput.type = 'date';
+            birthInput.max = new Date().toISOString().split('T')[0];
+
+            function validateYoungAdultAge() {
+                const cartItems = document.querySelectorAll('.wc-block-components-product-name');
+                const isYoungAdultMembership = Array.from(cartItems).some(item => item.textContent.includes('Young Adult Membership'));
+                const submitButton = document.querySelector('.wc-block-components-checkout-place-order-button');
+                submitButton.disabled = true;
+                let ageMessage = document.getElementById('age-limit-message');
+                if ( ! isYoungAdultMembership ) {
+                    if ( ageMessage ) ageMessage.remove();
+                    if ( submitButton ) submitButton.disabled = false;
+                    return;
+                }
+
+                const birthDate = new Date(birthInput.value);
+                if ( !birthInput.value || isNaN(birthDate) ) {
+                    if ( ageMessage ) ageMessage.remove();
+                    if ( submitButton ) submitButton.disabled = false;
+                    return;
+                }
+
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const m = today.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+
+                if (age >= 30) {
+                    if (!ageMessage) {
+                        ageMessage = document.createElement('div');
+                        ageMessage.id = 'age-limit-message';
+                        ageMessage.style.color = '#cc1818';
+                        ageMessage.style.marginBottom = '10px';
+                        birthInput.parentNode.insertBefore(ageMessage, birthInput.nextSibling);
+                    }
+                    ageMessage.innerHTML = 'You must be less than 30 years old to subscribe to the Young Adults Membership.<br />Return to cart and remove the item to add the Regular membership.';
+                    if (submitButton) submitButton.disabled = true;
+                    birthInput.parentElement.classList.add('has-error');
+                } else {
+                    if (ageMessage) ageMessage.remove();
+                    birthInput.parentElement.classList.remove('has-error');
+                    if (submitButton) submitButton.disabled = false;
+                }
+            }
+
+            birthInput.addEventListener( 'change', validateYoungAdultAge );
+            
+            // Ejecuta el chequeo al cargar la página
+            validateYoungAdultAge();
+
+            birthInput.dataset.listenerAttached = "true";
+        }
     }
 });
 

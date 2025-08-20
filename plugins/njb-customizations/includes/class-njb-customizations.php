@@ -28,12 +28,12 @@ class NJB_Customizations {
     public function run() {
         require_once plugin_dir_path( __FILE__ ) . 'post-types/donations.php';
         require_once plugin_dir_path( __FILE__ ) . 'class-business.php';
-
         require_once plugin_dir_path( __FILE__ ) . 'acf.php';
         add_filter( 'excerpt_more', array( __CLASS__, 'custom_excerpt_more' ) );
         add_filter( 'excerpt_length', array( __CLASS__, 'custom_excerpt_length' ) );
         add_action( 'woocommerce_init', array( __CLASS__, 'add_whatsapp_number' ) );
         add_action( 'woocommerce_init', array( __CLASS__, 'add_group_options' ) );
+        add_action( 'woocommerce_init', array( __CLASS__, 'add_birth_date' ) );
         add_action( 'acf/init', array( __CLASS__, 'set_acf_settings' ) );
         add_filter( 'render_block_core/query', array( __CLASS__, 'query_carousel_block' ), 10, 2 );
         add_action( 'tribe_events_single_event_after_the_content', array( __CLASS__, 'event_add_external_link' ), 10, 2 );
@@ -47,7 +47,6 @@ class NJB_Customizations {
         remove_action( 'woocommerce_email_customer_details', array( $emails, 'additional_checkout_fields' ), 30, 3 );
         add_action( 'woocommerce_email_customer_details', array( __CLASS__, 'additional_checkout_fields' ), 30, 3 );
         add_filter( 'wc_stripe_force_save_source', array( __CLASS__, 'wps_sfw_wc_stripe_force_save_source_callback_old' ), 20 );
-
     }
 
     /**
@@ -107,6 +106,45 @@ class NJB_Customizations {
                 )
             );
         }
+    }
+
+    public static function add_birth_date() {
+        woocommerce_register_additional_checkout_field(
+            array(
+                'id'            => 'njb/birth_date',
+                'type'          => 'text',
+                'label'         => 'Birth Date',
+                'location'      => 'contact',
+                'required'      => true,
+                'attributes'    => array(
+                    'autocomplete'     => 'birth_date',
+                    'aria-describedby' => 'Birth Date',
+                    'aria-label'       => 'Birth Date label',
+                ),
+            ),
+        );
+
+        add_action(
+        'woocommerce_validate_additional_field',
+            function ( WP_Error $errors, $field_key, $field_value ) {
+            if ( 'njb/birth_date' === $field_key ) {
+                    //Check if value is date and less than 30 years old
+                    $birth_date = DateTime::createFromFormat( 'Y-m-d', $field_value );
+                    // Check if cart contains the Young Adults Membership
+                    $isYoungAdultMembership = false;
+                    foreach ( WC()->cart->get_cart() as $cart_item ) {
+                        if ( $cart_item['product_id'] === 1081 ) { // Replace with the actual product ID for Young Adults Membership
+                            $isYoungAdultMembership = true;
+                            break;
+                        }
+                    }
+                    if ( $isYoungAdultMembership &&$birth_date < new DateTime( '-30 years' ) ) {
+                        $errors->add( 'invalid_age', 'You must be less than 30 years old to subscribe to the Young Adults Membership.<br /><a href="/cart">Return to cart</a> and remove the item to add the Regular membership.' );
+                    }
+                }
+                return $errors;
+            }, 10, 3
+        );
     }
 
     /**
