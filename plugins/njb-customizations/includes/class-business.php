@@ -145,7 +145,7 @@ class NJB_business {
 
         $new_post_id = wp_insert_post( array(
             'post_type'   => 'business',
-            'post_status' => 'draft',
+            'post_status' => 'pending',
             'post_author' => $user_id,
             'post_title'  => 'Draft business for ' . $user_id
         ));
