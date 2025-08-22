@@ -121,7 +121,7 @@ add_action( 'acf/include_fields', function() {
         )
     );
 
-	acf_add_local_field_group( 
+	acf_add_local_field_group(
         array(
             'key' => 'group_686af5a58e1c5',
             'title' => 'Pages',
@@ -169,7 +169,7 @@ add_action( 'acf/include_fields', function() {
         )
     );
 
-	acf_add_local_field_group(
+    acf_add_local_field_group(
         array(
             'key' => 'group_689dc056bc04c',
             'title' => 'Business',
@@ -200,7 +200,7 @@ add_action( 'acf/include_fields', function() {
                     'label' => 'Sector/Industry',
                     'name' => 'sectorindustry',
                     'aria-label' => '',
-                    'type' => 'text',
+                    'type' => 'select',
                     'instructions' => '',
                     'required' => 0,
                     'conditional_logic' => 0,
@@ -209,12 +209,38 @@ add_action( 'acf/include_fields', function() {
                         'class' => '',
                         'id' => '',
                     ),
-                    'default_value' => '',
-                    'maxlength' => '',
+                    'choices' => array(
+                        'Fashion & Apparel' => 'Fashion & Apparel',
+                        'Beauty & Wellness' => 'Beauty & Wellness',
+                        'Food & Beverage' => 'Food & Beverage',
+                        'Events & Entertainment' => 'Events & Entertainment',
+                        'Education & Training' => 'Education & Training',
+                        'Finance & Investment' => 'Finance & Investment',
+                        'Technology & Digital Services' => 'Technology & Digital Services',
+                        'Real Estate & Housing' => 'Real Estate & Housing',
+                        'Healthcare & Medical' => 'Healthcare & Medical',
+                        'Nonprofit & Community' => 'Nonprofit & Community',
+                        'Retail & E-commerce' => 'Retail & E-commerce',
+                        'Consulting & Professional Services' => 'Consulting & Professional Services',
+                        'Travel & Hospitality' => 'Travel & Hospitality',
+                        'Arts & Creative' => 'Arts & Creative',
+                        'Media & Communications' => 'Media & Communications',
+                        'Logistics & Transportation' => 'Logistics & Transportation',
+                        'Home & Lifestyle' => 'Home & Lifestyle',
+                        'Agriculture & Sustainability' => 'Agriculture & Sustainability',
+                        'Legal & Compliance' => 'Legal & Compliance',
+                        'Others' => 'Others',
+                    ),
+                    'default_value' => false,
+                    'return_format' => 'value',
+                    'multiple' => 0,
+                    'allow_null' => 0,
                     'allow_in_bindings' => 0,
+                    'ui' => 1,
+                    'ajax' => 0,
                     'placeholder' => '',
-                    'prepend' => '',
-                    'append' => '',
+                    'create_options' => 0,
+                    'save_options' => 0,
                 ),
                 array(
                     'key' => 'field_689dc076d6518',
@@ -722,4 +748,3 @@ add_action( 'acf/include_fields', function() {
         ) 
     );
 } );
-
