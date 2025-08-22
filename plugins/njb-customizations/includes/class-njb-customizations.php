@@ -133,7 +133,7 @@ class NJB_Customizations {
                     // Check if cart contains the Young Adults Membership
                     $isYoungAdultMembership = false;
                     foreach ( WC()->cart->get_cart() as $cart_item ) {
-                        if ( $cart_item['product_id'] === 1081 ) { // Replace with the actual product ID for Young Adults Membership
+                        if ( $cart_item['product_id'] === 1397 ) { // Replace with the actual product ID for Young Adults Membership
                             $isYoungAdultMembership = true;
                             break;
                         }
