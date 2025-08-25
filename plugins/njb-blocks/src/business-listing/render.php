@@ -14,7 +14,7 @@ if ( ! function_exists( 'njb_get_filters' ) ) {
 		// Example: Dropdown filter for an ACF field "genre"
 		$business['sector']           = array( 'label' => 'Sectors', 'terms' => get_terms( ['taxonomy' => 'business_sector', 'hide_empty' => true] ) );
 		$business['location_country'] = array( 'label' => 'Countries', 'terms' => get_terms( ['taxonomy' => 'business_location_country', 'hide_empty' => true] ) );
-		$business['location_state']   = array( 'label' => 'States', 'terms' => get_terms( ['taxonomy' => 'business_location_state', 'hide_empty' => true] ) );
+		//$business['location_state']   = array( 'label' => 'States', 'terms' => get_terms( ['taxonomy' => 'business_location_state', 'hide_empty' => true] ) );
 		?>
 		<form id="cpt-filters" class="business-filters" >
 			<input type="text" name="s" class="wpforms-field-medium" placeholder="Search..." />
@@ -54,8 +54,45 @@ if ( ! function_exists( 'njb_get_filters' ) ) {
 					if ( get_field( 'small_business_logoicon' ) ) {
 						echo '<div class="business-logo">' . wp_get_attachment_image( get_field('small_business_logoicon'), 'medium' ) . '</div>';
 					}
-					?>
-					<h5><?php the_title(); ?></h5>
+					// Display the location country and state
+					$address_group = get_field('address');
+					$street_address = $address_group['street_address'];
+					if ( ! empty ( $street_address ) ) {
+						$address['street_address'] = $street_address;
+					}
+					$city = $address_group['city'];
+					if ( ! empty ( $city ) ) {
+						if( ! empty( $address['street_address'] ) ) {
+							$address['street_address'] .= ' ';
+						}
+						$address['street_address'] .= $city;
+					}
+					$postal_code = $address_group['postal_code'];
+					if ( ! empty( $postal_code ) ) {
+						if( ! empty( $address['street_address'] ) ) {
+							$address['street_address'] .= ' ';
+						}
+						$address['street_address'] .=  $postal_code;
+					}
+				
+					$state         = get_the_terms( get_the_ID(), 'business_location_state' );
+					$country       = get_the_terms( get_the_ID(), 'business_location_country' );
+					// map state and country into string of names
+					if ( ! empty ( $state ) && !is_wp_error( $state ) ) 
+						$address['state'] = implode(', ', array_map(function($s){ return $s->name; }, $state ) );
+					if ( ! empty ( $country ) && !is_wp_error( $country ) )
+						$address['country'] = implode(', ', array_map(function($c){ return $c->name; }, $country ) );
+		
+					$phone_number = get_field('phone_number');
+					$email = get_field('email');
+					$website = get_field('website');
+
+					if ( $website ) : ?>
+						<h5 class="business-website"><a href="<?php echo esc_url( $website ); ?>" target="_blank" rel="noopener"><?php the_title(); ?></a></h5>
+					<?php else : ?>
+						<h5><?php the_title(); ?></h5>					
+					<?php endif; ?>
+					
 					<?php // Display the sector
 					$sectors = get_the_terms( get_the_ID(), 'business_sector' );
 					if ( $sectors && ! is_wp_error( $sectors ) ) {
@@ -65,24 +102,25 @@ if ( ! function_exists( 'njb_get_filters' ) ) {
 						}
 						echo '</p>';
 					}
-					?>
-					<?php // Display the location country and state
-					$country = get_the_terms( get_the_ID(), 'business_location_country' );
-					$state = get_the_terms( get_the_ID(), 'business_location_state' );
-					if ( $country && ! is_wp_error( $country ) ) { ?>
+					if ( ! empty( $address ) ) { ?>
 						<p class="business-location">
-							<?php
-							foreach ( $state as $s ) {
-								echo esc_html( $s->name );
-							}
-							if ( $state && ! is_wp_error( $state ) && $country && ! is_wp_error( $country ) ) {
-								echo ', ';
-							}
-							foreach ( $country as $c ) {
-								echo esc_html( $c->name );
-							} ?>
+							<span class="dashicons dashicons-location"></span>
+							<?php echo implode(	', ', $address ) ?>
 						</p>
 					<?php } ?>
+					<?php if ( $phone_number ) : ?>
+						<p class="business-phone">
+							<span class="dashicons dashicons-phone"></span>
+							<a href="tel:<?php echo esc_attr( preg_replace('/\s+/', '', $phone_number) ); ?>"><?php echo esc_html( $phone_number ); ?></a>
+						</p>
+					<?php endif; ?>
+					<?php if ( $email ) : ?>
+						<p class="business-email">
+							<span class="dashicons dashicons-email"></span>
+							<a href="mailto:<?php echo esc_attr( $email ); ?>"><?php echo esc_html( $email ); ?></a>
+						</p>
+					<?php endif; ?>
+				
 				</div>
 			<?php endwhile;
 		else :

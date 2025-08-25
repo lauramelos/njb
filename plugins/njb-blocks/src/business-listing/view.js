@@ -36,23 +36,36 @@ document.addEventListener("submit", (e) => {
       .then(posts => {
         const container = document.querySelector("#cpt-listing-results");
         container.innerHTML = posts.length
-        ? posts.map(p => `
-            <div class="business-listing-item">
-            ${p.logo ? `<div class="business-logo">${p.logo}</div>` : ""}
-            <h5>${p.title}</h5>
-            ${p.sectors && p.sectors.length ? `
-                <p class="business-sector">
-                ${p.sectors.map(sector => `${sector['name']}`).join(' ')}
-                </p>
-            ` : ""}
-            ${(p.country && p.country.length) ? `
-                <p class="business-location">
-                ${(p.state && p.state.length) ? p.state.map(s => `${s['name']}`).join(', ') : ''}
-                ${(p.state && p.state.length && p.country && p.country.length) ? ', ' : ''}
-                ${p.country.map(c => `${c['name']}`).join(', ')}
-                </p>
-            ` : ""}
-            </div>
+        ? posts.map( item => `
+          <div class="business-listing-item">
+              ${item.logo ? `<div class="business-logo">${item.logo}</div>` : ""}
+              <h5 class="business-website">
+                  ${item.website ? `<a href="${item.website}" target="_blank" rel="noopener">${item.title}</a>` : item.title}
+              </h5>
+              ${item.sectors && item.sectors.length ? `
+                  <p class="business-sector">
+                      ${item.sectors.map(sector => `${sector['name']}`).join(' ')}
+                  </p>
+              ` : ""}
+              ${item.address && item.address.length ? `
+                  <p class="business-location">
+                      <span class="dashicons dashicons-location"></span>
+                      ${item.address.join(', ')}
+                  </p>
+              ` : ""}
+              ${item.phone_number ? `
+                  <p class="business-phone">
+                      <span class="dashicons dashicons-phone"></span>
+                      <a href="tel:${item.phone_number.replace(/\s+/g, '')}">${item.phone_number}</a>
+                  </p>
+              ` : ""}
+              ${item.email ? `
+                  <p class="business-email">
+                      <span class="dashicons dashicons-email"></span>
+                      <a href="mailto:${item.email}">${item.email}</a>
+                  </p>
+              ` : ""}
+          </div>
         `).join("")
         : "<p>No results found.</p>";
       });

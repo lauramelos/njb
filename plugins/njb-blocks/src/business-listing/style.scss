@@ -50,13 +50,21 @@
 		}
 		&-item {
 			display: grid;
-			grid-template-columns: 1fr;
-			grid-template-rows: 250px auto auto;
-			gap: 1em;
+			grid-template-columns: 1fr;			
+			grid-template-rows: 250px 40px 40px repeat(3, minmax(0, 1fr));
+			gap: 0.5em;
 			padding: 1em;
 			background-color: var(--wp--preset--color--base);
 			h5, p {
 				margin: 0;
+			}
+			p {
+				font-size: var(--wp--preset--font-size--small);
+				line-height: 1.4;
+				&.business-sector {
+					font-weight: 600;
+					margin-bottom: 0.5em;
+				}
 			}
 		}
 	}

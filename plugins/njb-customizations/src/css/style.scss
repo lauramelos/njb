@@ -2,6 +2,23 @@
 
 @media (max-width: 640px) {
 /* Styles for screens smaller than 640px (small breakpoint) */
+    .wp-container-core-group-is-layout-07cc0d9b {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+    .wp-block-site-logo {
+        order: 0;
+        grid-column: span 2;
+    }
+    .wp-block-navigation {
+        order: 2;
+        grid-column: span 1;
+    }
+    .wp-block-woocommerce-mini-cart {
+        order: 1;
+        grid-column: span 3;
+
+    }
+        
     .wp-block-site-logo {
         width: 70%;
     }
@@ -63,6 +80,10 @@
 }
 .wpforms-container{
     width:100%!important;
+    &.subscribe-form{    
+        width: 400px !important;
+        max-width: 80%!important;
+    }
     .wpforms-submit-container{
         text-align: center;
     }
@@ -389,4 +410,9 @@ strong {
         min-height: 0;
         width: 100%;
     }
+}
+
+.wp-block-woocommerce-mini-cart {
+    align-self: center;
+    justify-self: end;
 }

@@ -75,21 +75,21 @@ function njb_listing_api(WP_REST_Request $request) {
     if ( ! empty( $request['business_location_country'] ) ) {
         $args['tax_query'][] = [[
             'taxonomy' => 'business_location_country',
-            'field' => 'name',
+            'field' => 'slug',
             'terms' => sanitize_text_field( $request['business_location_country']),
         ]];
     }
 	if ( ! empty( $request['business_location_state'] ) ) {
         $args['tax_query'][] = [[
             'taxonomy' => 'business_location_state',
-            'field' => 'name',
+            'field' => 'slug',
             'terms' => sanitize_text_field( $request['business_location_state']),
         ]];
     }
 	if ( ! empty( $request['business_sector'] ) ) {
         $args['tax_query'][] = [[
             'taxonomy' => 'business_sector',
-            'field' => 'name',
+            'field' => 'slug',
             'terms' => sanitize_text_field( $request['business_sector']),
         ]];
     }
@@ -129,11 +129,44 @@ function njb_listing_api(WP_REST_Request $request) {
     while ( $query->have_posts() ) {
         $query->the_post();
 		if ( ! get_field('approved') ) continue;
+        $address_group = get_field('address');
+        $street_address = '';
+        $address = [];
+        $street_address1 = $address_group['street_address'];
+        if ( ! empty ( $street_address1 ) ) {
+            $street_address .= $street_address1;
+        }
+        $city = $address_group['city'];
+        if ( ! empty ( $city ) ) {
+            if( ! empty( $street_address ) ) {
+                $street_address .= ' ';
+            }
+            $street_address .= $city;
+        }
+        $postal_code = $address_group['postal_code'];
+        if ( ! empty( $postal_code ) ) {
+            if( ! empty( $street_address ) ) {
+                $street_address .= ' ';
+            }
+            $street_address .=  $postal_code;
+        }
+        $address[] = $street_address;
+        $state         = get_the_terms( get_the_ID(), 'business_location_state' );
+        $country       = get_the_terms( get_the_ID(), 'business_location_country' );
+        // map state and country into string of names
+        if ( ! empty ( $state ) && !is_wp_error( $state ) ) 
+            $address[] = implode(', ', array_map(function($s){ return $s->name; }, $state ) );
+        if ( ! empty ( $country ) && !is_wp_error( $country ) )
+            $address[] = implode(', ', array_map(function($c){ return $c->name; }, $country ) );
+		
         $posts[] = [
             'title' => get_the_title(),
-            'link'  => get_permalink(),
+            'website' => get_permalink(),
+            'phone_number' => get_field('phone_number'),
+            'email' => get_field('email'),
             'logo'  => wp_get_attachment_image( get_field('small_business_logoicon'), 'medium' ),
-			'sectors' => get_the_terms( get_the_ID(), 'business_sector' ),
+			'address' => $address ?? [],
+            'sectors' => get_the_terms( get_the_ID(), 'business_sector' ),
 			'country' => get_the_terms( get_the_ID(), 'business_location_country' ),
 			'state'   => get_the_terms( get_the_ID(), 'business_location_state' ),
 			'excerpt' => get_the_excerpt(),
