@@ -67,5 +67,20 @@
 				}
 			}
 		}
+		
+	}
+	@media (max-width: 640px) {
+		.business-filters {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			> * {
+				margin-right: 0px!important;
+			}
+		}
+		.business-listing {
+			grid-template-columns: repeat(1, minmax(0, 1fr));
+			
+		}
 	}
 }

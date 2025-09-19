@@ -9,7 +9,8 @@
         order: 0;
         grid-column: span 2;
     }
-    .wp-block-navigation {
+    header > div > div > nav.wp-block-navigation
+    {
         order: 2;
         grid-column: span 1;
     }
