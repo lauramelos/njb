@@ -43,6 +43,7 @@ class NJB_Customizations {
         add_filter( 'wps_sfw_add_case_column', array( __CLASS__, 'add_custom_number_value_to_subscription_table' ), 10, 3 );
         add_filter( 'woocommerce_add_to_cart_handler', array( __CLASS__, 'add_to_cart_subscription_handler' ), 10, 2 );
         add_action( 'woocommerce_add_to_cart_handler_wps_swf_subscription_handler', array( __CLASS__, 'redirect_subscription_to_checkout') );
+        add_filter( 'wps_sfw_add_to_cart_validation', array( __CLASS__, 'remove_subscription_from_cart'), 10, 3 );
         $emails = WC_Emails::instance();
         remove_action( 'woocommerce_email_customer_details', array( $emails, 'additional_checkout_fields' ), 30, 3 );
         add_action( 'woocommerce_email_customer_details', array( __CLASS__, 'additional_checkout_fields' ), 30, 3 );
@@ -358,6 +359,20 @@ class NJB_Customizations {
         wp_safe_redirect( wc_get_checkout_url() );
         exit;
 			
+    }
+
+    public static function remove_subscription_from_cart( $passed, $product_id, $quantity ) {
+        // Remove the subscription product from the cart
+        foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+            // Check if the cart item is the subscription product
+            if ( wps_sfw_check_product_is_subscription( $cart_item['data'] ) ) {
+                error_log('Removing subscription product from cart: ' . $cart_item['product_id'] );
+                WC()->cart->remove_cart_item( $cart_item_key );
+                $passed = true;
+                break;
+            }
+        }
+        return $passed;
     }
 
 
