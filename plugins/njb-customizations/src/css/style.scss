@@ -311,8 +311,34 @@ strong {
     .wc-block-components-address-form__njb-whatsapp_number {
         grid-column: span 2;
     }
-    @media (max-width: 640px) {
-        grid-template-columns: repeat(2, 1fr);
+    
+    .wc-block-components-address-form__njb-birth_date{
+        grid-column: span 2;
+        input   {
+            width: 100%;
+            padding: 1.5em .5em .5em;
+            text-align: center;
+            background-color: #fff;
+            border: 1px solid hsla(0, 0%, 7%, .8);
+            border-radius: 4px;
+            box-sizing: border-box;
+            color: #2b2d2f;
+            font-family: inherit;
+            font-size: 1em;
+            height: 3.125em;
+            line-height: 1em;
+            margin: 0;
+            min-height: 0;
+            width: 100%;
+        }
+    }
+     @media (max-width: 640px) {
+        > * {
+            grid-column: span 4!important;
+        }
+        .wc-block-components-checkbox{
+            grid-column: span 2!important;
+        }
     }
 }
 
@@ -390,27 +416,6 @@ strong {
 }
 .select2-container .select2-selection--single {
     height: auto!important;
-}
-
-.wc-block-components-address-form__njb-birth_date{
-    grid-column: span 2;
-    input   {
-        width: 100%;
-        padding: 1.5em .5em .5em;
-        text-align: center;
-        background-color: #fff;
-        border: 1px solid hsla(0, 0%, 7%, .8);
-        border-radius: 4px;
-        box-sizing: border-box;
-        color: #2b2d2f;
-        font-family: inherit;
-        font-size: 1em;
-        height: 3.125em;
-        line-height: 1em;
-        margin: 0;
-        min-height: 0;
-        width: 100%;
-    }
 }
 
 .wp-block-woocommerce-mini-cart {
