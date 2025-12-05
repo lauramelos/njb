@@ -104,6 +104,19 @@ class NJB_Customizations {
                     'location' => 'contact',
                     'type'     => 'checkbox',
                     'class'    => 'njb-group-option',
+                    'hidden' => [
+                        'cart' => [
+                            'properties' => [
+                                'items' => [
+                                    'not' => [
+                                        'contains' => [
+                                            'enum' => [953, 1397] //subscription products IDs
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
                 )
             );
         }
