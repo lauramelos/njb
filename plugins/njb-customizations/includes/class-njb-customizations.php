@@ -47,6 +47,11 @@ class NJB_Customizations {
         $emails = WC_Emails::instance();
         remove_action( 'woocommerce_email_customer_details', array( $emails, 'additional_checkout_fields' ), 30, 3 );
         add_action( 'woocommerce_email_customer_details', array( __CLASS__, 'additional_checkout_fields' ), 30, 3 );
+
+        // Remove WooCommerce Blocks default additional fields rendering on order details page
+        add_action( 'init', array( __CLASS__, 'remove_wc_blocks_order_fields_hook' ), 20 );
+
+        // Add our custom additional fields rendering
         add_action( 'woocommerce_order_details_after_customer_details', array( __CLASS__, 'display_additional_fields_on_order_page' ), 10, 1 );
         add_filter( 'wc_stripe_force_save_source', array( __CLASS__, 'wps_sfw_wc_stripe_force_save_source_callback_old' ), 20 );
         // Clear subscription product IDs cache when a product is saved or deleted
@@ -392,6 +397,28 @@ class NJB_Customizations {
             }
         }
         return $passed;
+    }
+
+    /**
+     * Remove WooCommerce Blocks default order fields hook.
+     * This prevents duplicate rendering of additional checkout fields.
+     */
+    public static function remove_wc_blocks_order_fields_hook() {
+        // Check if WooCommerce Blocks CheckoutFieldsFrontend class exists
+        if ( ! class_exists( 'Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsFrontend' ) ) {
+            return;
+        }
+
+        // Get the CheckoutFieldsFrontend instance from the container
+        try {
+            $checkout_fields_frontend = Package::container()->get( \Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFieldsFrontend::class );
+
+            // Remove the default hook
+            remove_action( 'woocommerce_order_details_after_customer_details', array( $checkout_fields_frontend, 'render_order_other_fields' ), 10 );
+        } catch ( Exception $e ) {
+            // If we can't get the instance, log the error
+            error_log( 'NJB Customizations: Could not remove WooCommerce Blocks order fields hook - ' . $e->getMessage() );
+        }
     }
 
 
