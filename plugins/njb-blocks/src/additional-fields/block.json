@@ -1,0 +1,17 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "create-block/additional-fields",
+	"version": "1.0.0",
+	"title": "Additional Fields",
+	"category": "widgets",
+	"icon": "list-view",
+	"description": "Display additional checkout fields conditionally based on subscription products.",
+	"supports": {
+		"html": false,
+		"align": false
+	},
+	"textdomain": "njb-blocks",
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}
