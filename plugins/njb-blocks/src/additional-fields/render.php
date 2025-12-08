@@ -32,15 +32,19 @@ if ( ! $order ) {
 	return;
 }
 
-// Check if order has subscription products
-$subscription_product_ids = array( 942 ); // IDs de productos de suscripción
+// Check if order has subscription products using NJB_Customizations method if available
+// Otherwise, check using wps_sfw_check_product_is_subscription function
 $has_subscription = false;
 
-foreach ( $order->get_items() as $item ) {
-	$product_id = $item->get_product_id();
-	if ( in_array( $product_id, $subscription_product_ids, true ) ) {
-		$has_subscription = true;
-		break;
+if ( class_exists( 'NJB_Customizations' ) && method_exists( 'NJB_Customizations', 'order_has_subscription_products' ) ) {
+	$has_subscription = NJB_Customizations::order_has_subscription_products( $order );
+} elseif ( function_exists( 'wps_sfw_check_product_is_subscription' ) ) {
+	foreach ( $order->get_items() as $item ) {
+		$product = $item->get_product();
+		if ( $product && wps_sfw_check_product_is_subscription( $product ) ) {
+			$has_subscription = true;
+			break;
+		}
 	}
 }
 

@@ -47,6 +47,7 @@ class NJB_Customizations {
         $emails = WC_Emails::instance();
         remove_action( 'woocommerce_email_customer_details', array( $emails, 'additional_checkout_fields' ), 30, 3 );
         add_action( 'woocommerce_email_customer_details', array( __CLASS__, 'additional_checkout_fields' ), 30, 3 );
+        add_action( 'woocommerce_order_details_after_customer_details', array( __CLASS__, 'display_additional_fields_on_order_page' ), 10, 1 );
         add_filter( 'wc_stripe_force_save_source', array( __CLASS__, 'wps_sfw_wc_stripe_force_save_source_callback_old' ), 20 );
     }
 
@@ -95,6 +96,9 @@ class NJB_Customizations {
     }
 
     public static function add_group_options() {
+        // Get all subscription product IDs dynamically
+        $subscription_product_ids = self::get_subscription_product_ids();
+
         foreach ( self::$group_options as $key => $value ) {
             woocommerce_register_additional_checkout_field(
                 array(
@@ -110,7 +114,7 @@ class NJB_Customizations {
                                 'items' => [
                                     'not' => [
                                         'contains' => [
-                                            'enum' => [953, 1397] //subscription products IDs
+                                            'enum' => $subscription_product_ids // Subscription products IDs (dynamically loaded)
                                         ]
                                     ]
                                 ]
@@ -390,6 +394,54 @@ class NJB_Customizations {
 
 
     /**
+     * Get all subscription product IDs.
+     *
+     * @return array Array of subscription product IDs.
+     */
+    public static function get_subscription_product_ids() {
+        $subscription_ids = array();
+
+        if ( ! function_exists( 'wps_sfw_check_product_is_subscription' ) ) {
+            return $subscription_ids;
+        }
+
+        // Query all products
+        $args = array(
+            'post_type'      => 'product',
+            'posts_per_page' => -1,
+            'post_status'    => 'publish',
+            'fields'         => 'ids',
+        );
+
+        $product_ids = get_posts( $args );
+
+        foreach ( $product_ids as $product_id ) {
+            if ( wps_sfw_check_product_is_subscription( $product_id ) ) {
+                $subscription_ids[] = $product_id;
+            }
+        }
+
+        return $subscription_ids;
+    }
+
+    /**
+     * Check if an order has subscription products.
+     *
+     * @param WC_Order $order The order object.
+     * @return bool True if order has subscription products, false otherwise.
+     */
+    public static function order_has_subscription_products( $order ) {
+        foreach ( $order->get_items() as $item ) {
+            $product = $item->get_product();
+            if ( $product && function_exists( 'wps_sfw_check_product_is_subscription' ) && wps_sfw_check_product_is_subscription( $product ) ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Add additional checkout fields to the WooCommerce emails.
      *
      * @param WC_Order $order The order object.
@@ -397,7 +449,7 @@ class NJB_Customizations {
      * @param bool $plain_text Whether the email is plain text.
      */
     public static function additional_checkout_fields( $order, $sent_to_admin, $plain_text ) {
-        // Get the WhatsApp number from the order meta 
+        // Get the WhatsApp number from the order meta
         $checkout_fields = Package::container()->get( CheckoutFields::class );
         $all_fields = $checkout_fields->get_all_fields_from_object( $order, 'other' );
 
@@ -412,11 +464,61 @@ class NJB_Customizations {
             echo '<p><strong>' . __( 'Custom Number:', 'njb-customizations' ) . '</strong> ' . esc_html( $custom_number ) . '<br />';
             echo '<strong>' . __( 'Note: ', 'njb-customizations') . '</strong>' . __( 'This NJB ID will be required for registration at future NJB events.', 'njb-customizations' ) . '</p>';
         }
+
+        // Solo mostrar los grupos si la orden tiene productos de suscripción
+        if ( ! self::order_has_subscription_products( $order ) ) {
+            return;
+        }
         ?>
          <p>
-            <strong><?php esc_html_e( 'Main NJB Group: ', 'njb-customizations' ); ?></strong> 
+            <strong><?php esc_html_e( 'Main NJB Group: ', 'njb-customizations' ); ?></strong>
             <a href="https://chat.whatsapp.com/Gb5oNEguy8N1zRXIStjbh0" target="_blank">Join Main Whatsapp Group</a>
-        </p> 
+        </p>
+        <p>
+            <strong><?php esc_html_e( 'Selected Aditional Groups: ', 'njb-customizations' ); ?></strong><br />
+            <?php
+                foreach ( self::$group_options as $key => $value ) {
+                    $group_value = $all_fields[ $key ];
+                    if ( ! empty( $group_value ) ) {
+                        echo esc_html( $value['label'] ) . ': <a href="https://chat.whatsapp.com/' . esc_html( $value['whatsapp'] ) . '" target="_blank">Join Whatsapp Group</a><br />';
+                    }
+                }
+            ?>
+        </p>
+        <?php
+    }
+
+    /**
+     * Display additional fields on the order received page.
+     *
+     * @param WC_Order $order The order object.
+     */
+    public static function display_additional_fields_on_order_page( $order ) {
+        // Get the WhatsApp number from the order meta
+        $checkout_fields = Package::container()->get( CheckoutFields::class );
+        $all_fields = $checkout_fields->get_all_fields_from_object( $order, 'other' );
+
+        $whatsapp_number =  $all_fields[ 'njb/whatsapp_number' ];
+        if ( ! empty( $whatsapp_number ) ) {
+            echo '<p><strong>' . __( 'WhatsApp Number:', 'njb-customizations' ) . '</strong> ' . esc_html( $whatsapp_number ) . '</p>';
+        }
+
+        // Get the custom number from the order meta
+        $custom_number = $order->get_meta( 'custom_number' );
+        if ( ! empty( $custom_number ) ) {
+            echo '<p><strong>' . __( 'Custom Number:', 'njb-customizations' ) . '</strong> ' . esc_html( $custom_number ) . '<br />';
+            echo '<strong>' . __( 'Note: ', 'njb-customizations') . '</strong>' . __( 'This NJB ID will be required for registration at future NJB events.', 'njb-customizations' ) . '</p>';
+        }
+
+        // Solo mostrar los grupos si la orden tiene productos de suscripción
+        if ( ! self::order_has_subscription_products( $order ) ) {
+            return;
+        }
+        ?>
+         <p>
+            <strong><?php esc_html_e( 'Main NJB Group: ', 'njb-customizations' ); ?></strong>
+            <a href="https://chat.whatsapp.com/Gb5oNEguy8N1zRXIStjbh0" target="_blank">Join Main Whatsapp Group</a>
+        </p>
         <p>
             <strong><?php esc_html_e( 'Selected Aditional Groups: ', 'njb-customizations' ); ?></strong><br />
             <?php
