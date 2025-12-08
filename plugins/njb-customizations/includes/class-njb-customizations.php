@@ -49,6 +49,9 @@ class NJB_Customizations {
         add_action( 'woocommerce_email_customer_details', array( __CLASS__, 'additional_checkout_fields' ), 30, 3 );
         add_action( 'woocommerce_order_details_after_customer_details', array( __CLASS__, 'display_additional_fields_on_order_page' ), 10, 1 );
         add_filter( 'wc_stripe_force_save_source', array( __CLASS__, 'wps_sfw_wc_stripe_force_save_source_callback_old' ), 20 );
+        // Clear subscription product IDs cache when a product is saved or deleted
+        add_action( 'save_post_product', array( __CLASS__, 'clear_subscription_product_ids_cache' ) );
+        add_action( 'delete_post', array( __CLASS__, 'clear_subscription_product_ids_cache' ) );
     }
 
     /**
@@ -98,7 +101,6 @@ class NJB_Customizations {
     public static function add_group_options() {
         // Get all subscription product IDs dynamically
         $subscription_product_ids = self::get_subscription_product_ids();
-
         foreach ( self::$group_options as $key => $value ) {
             woocommerce_register_additional_checkout_field(
                 array(
@@ -396,9 +398,20 @@ class NJB_Customizations {
     /**
      * Get all subscription product IDs.
      *
+     * @param bool $force_refresh Force refresh the cache.
      * @return array Array of subscription product IDs.
      */
-    public static function get_subscription_product_ids() {
+    public static function get_subscription_product_ids( $force_refresh = false ) {
+        $transient_key = 'njb_subscription_product_ids';
+
+        // Try to get cached value
+        if ( ! $force_refresh ) {
+            $cached_ids = get_transient( $transient_key );
+            if ( false !== $cached_ids ) {
+                return $cached_ids;
+            }
+        }
+
         $subscription_ids = array();
 
         if ( ! function_exists( 'wps_sfw_check_product_is_subscription' ) ) {
@@ -416,12 +429,30 @@ class NJB_Customizations {
         $product_ids = get_posts( $args );
 
         foreach ( $product_ids as $product_id ) {
-            if ( wps_sfw_check_product_is_subscription( $product_id ) ) {
+            $wps_subscription_product = wps_sfw_get_meta_data( $product_id, '_wps_sfw_product', true );
+			if ( 'yes' === $wps_subscription_product ) {
                 $subscription_ids[] = $product_id;
             }
         }
 
+        // Cache for 12 hours (43200 seconds)
+        set_transient( $transient_key, $subscription_ids, 12 * HOUR_IN_SECONDS );
+
         return $subscription_ids;
+    }
+
+    /**
+     * Clear the subscription product IDs cache.
+     *
+     * @param int $post_id The post ID.
+     */
+    public static function clear_subscription_product_ids_cache( $post_id = 0 ) {
+        // If a post_id is provided, check if it's a product
+        if ( $post_id && 'product' !== get_post_type( $post_id ) ) {
+            return;
+        }
+
+        delete_transient( 'njb_subscription_product_ids' );
     }
 
     /**
