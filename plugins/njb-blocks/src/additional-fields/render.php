@@ -104,5 +104,6 @@ $group_options = array(
 				?>
 			</p>
 		<?php endif; ?>
+		<?php echo esc_html__( 'Check your email address for your login information and unique NJB ID.', 'njb-blocks' ); ?>
 	</div>
 </div>
