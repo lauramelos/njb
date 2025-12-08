@@ -57,6 +57,10 @@ if ( ! $has_subscription ) {
 $checkout_fields = Automattic\WooCommerce\Blocks\Package::container()->get( Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class );
 $all_fields = $checkout_fields->get_all_fields_from_object( $order, 'other' );
 
+// Get WhatsApp number and Custom Number
+$whatsapp_number = ! empty( $all_fields['njb/whatsapp_number'] ) ? $all_fields['njb/whatsapp_number'] : '';
+$custom_number = $order->get_meta( 'custom_number' );
+
 // Get group options from NJB_Customizations class
 $group_options = array(
 	'njb/book-club'           => array( 'label' => 'Book Club',             'whatsapp' => 'LTr2ryN0Lf2BN5ARpA99qf' ),
@@ -71,8 +75,20 @@ $group_options = array(
 
 ?>
 <div class="njb-additional-fields alignwide wp-block-woocommerce-order-confirmation-billing-wrapper">
-	<h2 class="wp-block-heading" style="font-size:clamp(15.747px, 0.984rem + ((1vw - 3.2px) * 0.809), 24px);">Groups</h2>
 	<div class="njb-whatsapp-groups wc-block-order-confirmation-billing-address alignwide">
+		<?php if ( ! empty( $whatsapp_number ) ) : ?>
+			<p>
+				<strong><?php esc_html_e( 'WhatsApp Number', 'njb-blocks' ); ?></strong> <?php echo esc_html( $whatsapp_number ); ?>
+			</p>
+		<?php endif; ?>
+
+		<?php if ( ! empty( $custom_number ) ) : ?>
+			<p>
+				<strong><?php esc_html_e( 'Custom Number', 'njb-blocks' ); ?></strong> <?php echo esc_html( $custom_number ); ?><br />
+				<strong><?php esc_html_e( 'Note:', 'njb-blocks' ); ?></strong> <?php esc_html_e( 'This NJB ID will be required for registration at future NJB events.', 'njb-blocks' ); ?>
+			</p>
+		<?php endif; ?>
+
 		<p>
 			<strong><?php esc_html_e( 'Main NJB Group', 'njb-blocks' ); ?></strong><a href="https://chat.whatsapp.com/Gb5oNEguy8N1zRXIStjbh0" target="_blank" rel="noopener noreferrer">
 				<?php esc_html_e( 'Join Main Whatsapp Group', 'njb-blocks' ); ?>
@@ -104,6 +120,9 @@ $group_options = array(
 				?>
 			</p>
 		<?php endif; ?>
-		<?php echo esc_html__( 'Check your email address for your login information and unique NJB ID.', 'njb-blocks' ); ?>
+		<p><?php echo esc_html__( 'Check your email address for your login information and unique NJB ID.', 'njb-blocks' ); ?></p>
+		<p><strong><?php echo esc_html__( '📌 Business Listing for Members', 'njb-blocks' ); ?></strong></p>
+		<p><?php echo esc_html__( 'As an NJB member, you are eligible to list your business in our official NJB Business Directory. This gives your brand visibility within the NJB community and allows other members to easily discover and support your services.', 'njb-blocks' ); ?></p>
+		<p><?php echo sprintf( __( 'You can submit your business detail here: %s', 'njb-blocks' ), '<a href="'.wc_get_account_endpoint_url( 'business' ) ).'">Business Area</a>';?></p>
 	</div>
 </div>

@@ -480,42 +480,70 @@ class NJB_Customizations {
      * @param bool $plain_text Whether the email is plain text.
      */
     public static function additional_checkout_fields( $order, $sent_to_admin, $plain_text ) {
-        // Get the WhatsApp number from the order meta
-        $checkout_fields = Package::container()->get( CheckoutFields::class );
-        $all_fields = $checkout_fields->get_all_fields_from_object( $order, 'other' );
-
-        $whatsapp_number =  $all_fields[ 'njb/whatsapp_number' ];
-        if ( ! empty( $whatsapp_number ) ) {
-            echo '<p><strong>' . __( 'WhatsApp Number:', 'njb-customizations' ) . '</strong> ' . esc_html( $whatsapp_number ) . '</p>';
-        }
-
-        // Get the custom number from the order meta
-        $custom_number = $order->get_meta( 'custom_number' );
-        if ( ! empty( $custom_number ) ) {
-            echo '<p><strong>' . __( 'Custom Number:', 'njb-customizations' ) . '</strong> ' . esc_html( $custom_number ) . '<br />';
-            echo '<strong>' . __( 'Note: ', 'njb-customizations') . '</strong>' . __( 'This NJB ID will be required for registration at future NJB events.', 'njb-customizations' ) . '</p>';
-        }
-
-        // Solo mostrar los grupos si la orden tiene productos de suscripción
+        // Solo mostrar si la orden tiene productos de suscripción
         if ( ! self::order_has_subscription_products( $order ) ) {
             return;
         }
+
+        // Get checkout fields
+        $checkout_fields = Package::container()->get( CheckoutFields::class );
+        $all_fields = $checkout_fields->get_all_fields_from_object( $order, 'other' );
+
+        // Get WhatsApp number and Custom Number
+        $whatsapp_number = ! empty( $all_fields['njb/whatsapp_number'] ) ? $all_fields['njb/whatsapp_number'] : '';
+        $custom_number = $order->get_meta( 'custom_number' );
+
         ?>
-         <p>
-            <strong><?php esc_html_e( 'Main NJB Group: ', 'njb-customizations' ); ?></strong>
-            <a href="https://chat.whatsapp.com/Gb5oNEguy8N1zRXIStjbh0" target="_blank">Join Main Whatsapp Group</a>
-        </p>
+        <?php if ( ! empty( $whatsapp_number ) ) : ?>
+            <p>
+                <strong><?php esc_html_e( 'WhatsApp Number:', 'njb-customizations' ); ?></strong> <?php echo esc_html( $whatsapp_number ); ?>
+            </p>
+        <?php endif; ?>
+
+        <?php if ( ! empty( $custom_number ) ) : ?>
+            <p>
+                <strong><?php esc_html_e( 'Custom Number:', 'njb-customizations' ); ?></strong> <?php echo esc_html( $custom_number ); ?><br />
+                <strong><?php esc_html_e( 'Note:', 'njb-customizations' ); ?></strong> <?php esc_html_e( 'This NJB ID will be required for registration at future NJB events.', 'njb-customizations' ); ?>
+            </p>
+        <?php endif; ?>
+
         <p>
-            <strong><?php esc_html_e( 'Selected Aditional Groups: ', 'njb-customizations' ); ?></strong><br />
-            <?php
+            <strong><?php esc_html_e( 'Main NJB Group', 'njb-customizations' ); ?></strong> <a href="https://chat.whatsapp.com/Gb5oNEguy8N1zRXIStjbh0" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Join Main Whatsapp Group', 'njb-customizations' ); ?></a>
+        </p>
+
+        <?php
+        $has_groups = false;
+
+        // Check if any groups are selected
+        foreach ( self::$group_options as $key => $value ) {
+            if ( ! empty( $all_fields[ $key ] ) ) {
+                $has_groups = true;
+                break;
+            }
+        }
+
+        if ( $has_groups ) :
+        ?>
+            <p>
+                <strong><?php esc_html_e( 'Selected Additional Groups', 'njb-customizations' ); ?></strong><br />
+                <?php
                 foreach ( self::$group_options as $key => $value ) {
                     $group_value = $all_fields[ $key ];
                     if ( ! empty( $group_value ) ) {
-                        echo esc_html( $value['label'] ) . ': <a href="https://chat.whatsapp.com/' . esc_html( $value['whatsapp'] ) . '" target="_blank">Join Whatsapp Group</a><br />';
+                        echo esc_html( $value['label'] ) . ': <a href="https://chat.whatsapp.com/' . esc_html( $value['whatsapp'] ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Join Whatsapp Group', 'njb-customizations' ) . '</a><br />';
                     }
                 }
-            ?>
-        </p>
+                ?>
+            </p>
+        <?php endif; ?>
+
+        <p><?php esc_html_e( 'Check your email address for your login information and unique NJB ID.', 'njb-customizations' ); ?></p>
+
+        <p><strong><?php esc_html_e( '📌 Business Listing for Members', 'njb-customizations' ); ?></strong></p>
+
+        <p><?php esc_html_e( 'As an NJB member, you are eligible to list your business in our official NJB Business Directory. This gives your brand visibility within the NJB community and allows other members to easily discover and support your services.', 'njb-customizations' ); ?></p>
+
+        <p><?php echo sprintf( __( 'You can submit your business detail here: %s', 'njb-customizations' ), '<a href="' . wc_get_account_endpoint_url( 'business' ) . '">Business Area</a>' ); ?></p>
         <?php
     }
 
@@ -525,42 +553,74 @@ class NJB_Customizations {
      * @param WC_Order $order The order object.
      */
     public static function display_additional_fields_on_order_page( $order ) {
-        // Get the WhatsApp number from the order meta
-        $checkout_fields = Package::container()->get( CheckoutFields::class );
-        $all_fields = $checkout_fields->get_all_fields_from_object( $order, 'other' );
-
-        $whatsapp_number =  $all_fields[ 'njb/whatsapp_number' ];
-        if ( ! empty( $whatsapp_number ) ) {
-            echo '<p><strong>' . __( 'WhatsApp Number:', 'njb-customizations' ) . '</strong> ' . esc_html( $whatsapp_number ) . '</p>';
-        }
-
-        // Get the custom number from the order meta
-        $custom_number = $order->get_meta( 'custom_number' );
-        if ( ! empty( $custom_number ) ) {
-            echo '<p><strong>' . __( 'Custom Number:', 'njb-customizations' ) . '</strong> ' . esc_html( $custom_number ) . '<br />';
-            echo '<strong>' . __( 'Note: ', 'njb-customizations') . '</strong>' . __( 'This NJB ID will be required for registration at future NJB events.', 'njb-customizations' ) . '</p>';
-        }
-
-        // Solo mostrar los grupos si la orden tiene productos de suscripción
+        // Solo mostrar si la orden tiene productos de suscripción
         if ( ! self::order_has_subscription_products( $order ) ) {
             return;
         }
+
+        // Get checkout fields
+        $checkout_fields = Package::container()->get( CheckoutFields::class );
+        $all_fields = $checkout_fields->get_all_fields_from_object( $order, 'other' );
+
+        // Get WhatsApp number and Custom Number
+        $whatsapp_number = ! empty( $all_fields['njb/whatsapp_number'] ) ? $all_fields['njb/whatsapp_number'] : '';
+        $custom_number = $order->get_meta( 'custom_number' );
+
         ?>
-         <p>
-            <strong><?php esc_html_e( 'Main NJB Group: ', 'njb-customizations' ); ?></strong>
-            <a href="https://chat.whatsapp.com/Gb5oNEguy8N1zRXIStjbh0" target="_blank">Join Main Whatsapp Group</a>
-        </p>
-        <p>
-            <strong><?php esc_html_e( 'Selected Aditional Groups: ', 'njb-customizations' ); ?></strong><br />
-            <?php
+        <div class="njb-additional-fields alignwide wp-block-woocommerce-order-confirmation-billing-wrapper">
+            <div class="njb-whatsapp-groups wc-block-order-confirmation-billing-address alignwide">
+                <?php if ( ! empty( $whatsapp_number ) ) : ?>
+                    <p>
+                        <strong><?php esc_html_e( 'WhatsApp Number:', 'njb-customizations' ); ?></strong> <?php echo esc_html( $whatsapp_number ); ?>
+                    </p>
+                <?php endif; ?>
+
+                <?php if ( ! empty( $custom_number ) ) : ?>
+                    <p>
+                        <strong><?php esc_html_e( 'Custom Number:', 'njb-customizations' ); ?></strong> <?php echo esc_html( $custom_number ); ?><br />
+                        <strong><?php esc_html_e( 'Note:', 'njb-customizations' ); ?></strong> <?php esc_html_e( 'This NJB ID will be required for registration at future NJB events.', 'njb-customizations' ); ?>
+                    </p>
+                <?php endif; ?>
+
+                <p>
+                    <strong><?php esc_html_e( 'Main NJB Group', 'njb-customizations' ); ?></strong> <a href="https://chat.whatsapp.com/Gb5oNEguy8N1zRXIStjbh0" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Join Main Whatsapp Group', 'njb-customizations' ); ?></a>
+                </p>
+
+                <?php
+                $has_groups = false;
+
+                // Check if any groups are selected
                 foreach ( self::$group_options as $key => $value ) {
-                    $group_value = $all_fields[ $key ];
-                    if ( ! empty( $group_value ) ) {
-                        echo esc_html( $value['label'] ) . ': <a href="https://chat.whatsapp.com/' . esc_html( $value['whatsapp'] ) . '" target="_blank">Join Whatsapp Group</a><br />';
+                    if ( ! empty( $all_fields[ $key ] ) ) {
+                        $has_groups = true;
+                        break;
                     }
                 }
-            ?>
-        </p>
+
+                if ( $has_groups ) :
+                ?>
+                    <p>
+                        <strong><?php esc_html_e( 'Selected Additional Groups', 'njb-customizations' ); ?></strong><br />
+                        <?php
+                        foreach ( self::$group_options as $key => $value ) {
+                            $group_value = $all_fields[ $key ];
+                            if ( ! empty( $group_value ) ) {
+                                echo esc_html( $value['label'] ) . ': <a href="https://chat.whatsapp.com/' . esc_html( $value['whatsapp'] ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Join Whatsapp Group', 'njb-customizations' ) . '</a><br />';
+                            }
+                        }
+                        ?>
+                    </p>
+                <?php endif; ?>
+
+                <p><?php esc_html_e( 'Check your email address for your login information and unique NJB ID.', 'njb-customizations' ); ?></p>
+
+                <p><strong><?php esc_html_e( '📌 Business Listing for Members', 'njb-customizations' ); ?></strong></p>
+
+                <p><?php esc_html_e( 'As an NJB member, you are eligible to list your business in our official NJB Business Directory. This gives your brand visibility within the NJB community and allows other members to easily discover and support your services.', 'njb-customizations' ); ?></p>
+
+                <p><?php echo sprintf( __( 'You can submit your business detail here: %s', 'njb-customizations' ), '<a href="' . wc_get_account_endpoint_url( 'business' ) . '">Business Area</a>' ); ?></p>
+            </div>
+        </div>
         <?php
     }
 
